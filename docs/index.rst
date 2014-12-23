@@ -25,6 +25,7 @@ Conteúdo
   instalacao
   transacoes
   planos_assinaturas
+  postback
 
 =================
 Autor
