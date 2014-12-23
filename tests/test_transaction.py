@@ -312,7 +312,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(transaction.data['id'], 173527)
 
     @httpretty.activate
-    def charge_with_metadata(self):
+    def test_charge_with_metadata(self):
         response = '''
         {
             "date_updated":"2014-12-22T19:17:09.000Z",
@@ -398,7 +398,7 @@ class TestTransaction(unittest.TestCase):
         transaction.charge()
 
         self.assertEqual(transaction.data['id'], 173540)
-        self.assertEqual(transaction['metadata']['order_id'], '123456')
+        self.assertEqual(transaction.data['metadata']['order_id'], '123456')
 
     @httpretty.activate
     def test_find_by_id(self):
