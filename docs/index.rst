@@ -14,6 +14,22 @@ Documentação do pagarme-python.
   :target: https://coveralls.io/r/allisson/pagarme-python?branch=master
   :alt: Coverage Status - Coveralls
 
+.. image:: https://pypip.in/download/pagarme-python/badge.svg?period=month
+  :target: https://pypi.python.org/pypi/pagarme-python
+  :alt: Downloads
+
+.. image:: https://pypip.in/version/pagarme-python/badge.svg
+  :target: https://pypi.python.org/pypi/pagarme-python
+  :alt: Latest Version
+
+.. image:: https://pypip.in/license/pagarme-python/badge.svg
+  :target: https://pypi.python.org/pypi/pagarme-python
+  :alt: License
+
+.. image:: https://pypip.in/py_versions/pagarme-python/badge.svg
+  :target: https://pypi.python.org/pypi/pagarme-python
+  :alt: Supported Python versions
+
 
 =================
 Conteúdo
