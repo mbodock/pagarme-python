@@ -15,7 +15,7 @@ testing_extras = [
 ]
 
 setup(
-    name='pagarme',
+    name='pagarme-python',
     version=version,
     author='Allisson Azevedo',
     author_email='allisson@gmail.com',
