@@ -11,7 +11,7 @@ class Transaction(object):
 
     def __init__(self, api_key=None, amount=None, card_hash=None,
             payment_method='credit_card', installments=1,
-            postback_url=None, metadata={}):
+            postback_url=None, metadata={}, soft_descriptor=''):
         self.amount = amount
         self.api_key = api_key
         self.card_hash = card_hash
@@ -19,6 +19,7 @@ class Transaction(object):
         self.installments = installments
         self.postback_url = postback_url
         self.metadata = metadata
+        self.soft_descriptor = soft_descriptor[:13]
         self.id = None
 
     def error(self, response):
@@ -56,6 +57,7 @@ class Transaction(object):
             d['card_hash'] = self.card_hash
             d['installments'] = self.installments
             d['payment_method'] = self.payment_method
+            d['soft_descriptor'] = self.soft_descriptor[:13]
 
         if self.metadata:
             d['metadata'] = self.metadata
