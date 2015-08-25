@@ -42,10 +42,10 @@ class Pygarme(object):
         transaction.find_by_id(id)
         return transaction
 
-    def all_transactions(self, count, page):
+    def all_transactions(self, page=1, count=10):
         data = {
-            'count': count,
             'page': page,
+            'count': count,
         }
         url = Transaction.BASE_URL + 'transactions'
         pagarme_response = requests.get(url, data=data)
