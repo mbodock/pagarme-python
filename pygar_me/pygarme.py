@@ -1,5 +1,9 @@
 # encoding: utf-8
 
+import json
+import requests
+
+from .exceptions import PygarmeApiError
 from .transaction import Transaction
 
 
@@ -26,3 +30,32 @@ class Pygarme(object):
             raise ValueError('Invalid installments')
 
         return Transaction(api_key=self.api_key, amount=amount, card_hash=card_hash, payment_method=payment_method, installments=installments, postback_url=postback_url)
+
+    def error(self, response):
+        data = json.loads(response)
+        e = data['errors'][0]
+        error_string = e['type'] + ' - ' + e['message']
+        raise PygarmeApiError(error_string)
+
+    def find_transaction_by_id(self, id):
+        transaction = Transaction(api_key=self.api_key)
+        transaction.find_by_id(id)
+        return transaction
+
+    def all_transactions(self, count, page):
+        data = {
+            'count': count,
+            'page': page,
+        }
+        url = Transaction.BASE_URL + 'transactions'
+        pagarme_response = requests.get(url, data=data)
+        if pagarme_response.status_code != 200:
+            self.error(pagarme_response.content)
+        responses = json.loads(pagarme_response.content)
+        transactions = []
+        for response in responses:
+            transaction = Transaction(api_key=self.api_key)
+            transaction.handle_response(response)
+            transactions.append(transaction)
+
+        return transactions

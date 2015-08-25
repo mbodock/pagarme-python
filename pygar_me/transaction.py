@@ -3,6 +3,8 @@
 import json
 import requests
 
+from .exceptions import PygarmeTransactionApiError
+
 
 class Transaction(object):
     BASE_URL = 'https://api.pagar.me/1/'
@@ -15,19 +17,23 @@ class Transaction(object):
         self.installments = installments
         self.postback_url = postback_url
 
+    def error(self, response):
+        data = json.loads(response)
+        e = data['errors'][0]
+        error_string = e['type'] + ' - ' + e['message']
+        raise PygarmeTransactionApiError(error_string)
+
     def charge(self):
         post_data = self.get_data()
         transaction_url = self.BASE_URL + 'transactions'
         pagarme_response = requests.post(transaction_url, data=post_data)
         if pagarme_response.status_code == 200:
-            self.handle_json_response(pagarme_response.content)
+            self.handle_response(json.loads(pagarme_response.content))
         else:
-            # TODO implementar exception
-            pass
+            self.error(pagarme_response.content)
 
-
-    def handle_json_response(self, response):
-        data = json.loads(response)
+    def handle_response(self, data):
+        self.id = data['id']
         self.status = data['status']
         self.card = data['card']
         self.postback_url = data['postback_url']
@@ -40,11 +46,23 @@ class Transaction(object):
     def __dict__(self):
         d = {
             'api_key': self.api_key,
-            'amount': self.amount,
-            'card_hash': self.card_hash,
-            'installments': self.installments,
-            'payment_method': self.payment_method,
         }
+        if self.amount:
+            d['amount'] = self.amount
+            d['card_hash'] = self.card_hash
+            d['installments'] = self.installments
+            d['payment_method'] = self.payment_method
+
         if self.postback_url:
             d['postback_url'] = self.postback_url
         return d
+
+    def find_by_id(self, id=None):
+        if not id or not isinstance(id, int):
+            raise ValueError('Transaction id not suplied')
+        url = self.BASE_URL + 'transactions/' + str(id)
+        pagarme_response = requests.get(url, data=self.get_data())
+        if pagarme_response.status_code == 200:
+            self.handle_response(json.loads(pagarme_response.content))
+        else:
+            self.error(pagarme_response.content)
