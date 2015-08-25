@@ -2,11 +2,10 @@
 
 import mock
 
-from pygar_me.transaction import Transaction, PygarmeTransactionApiError
+from pygar_me.transaction import Transaction, PygarmeTransactionApiError, PygarmeTransactionError
 
-from .mocks import fake_request, fake_request_fail
+from .mocks import fake_request, fake_request_fail, fake_request_refund
 from .pygarme_test import PygarmeTestCase
-
 
 
 class TransactionTestCase(PygarmeTestCase):
@@ -39,3 +38,24 @@ class TransactionTestCase(PygarmeTestCase):
         transaction = Transaction(api_key='apikey')
         with self.assertRaises(PygarmeTransactionApiError):
             transaction.find_by_id(314)
+
+    @mock.patch('requests.get', mock.Mock(side_effect=fake_request))
+    @mock.patch('requests.post', mock.Mock(side_effect=fake_request_refund))
+    def test_refund_transaction(self):
+        transaction = Transaction(api_key='apikey')
+        transaction.find_by_id(314)
+        transaction.refund()
+        self.assertEqual('refunded', transaction.status)
+
+    def test_refund_transaction_before_get(self):
+        transaction = Transaction(api_key='apikey')
+        with self.assertRaises(PygarmeTransactionError):
+            transaction.refund()
+
+    @mock.patch('requests.get', mock.Mock(side_effect=fake_request))
+    @mock.patch('requests.post', mock.Mock(side_effect=fake_request_fail))
+    def test_refund_transaction_fail(self):
+        transaction = Transaction(api_key='apikey')
+        transaction.find_by_id(314)
+        with self.assertRaises(PygarmeTransactionApiError):
+            transaction.refund()

@@ -3,7 +3,7 @@
 import json
 import requests
 
-from .exceptions import PygarmeTransactionApiError
+from .exceptions import PygarmeTransactionApiError, PygarmeTransactionError
 
 
 class Transaction(object):
@@ -16,6 +16,7 @@ class Transaction(object):
         self.payment_method = payment_method
         self.installments = installments
         self.postback_url = postback_url
+        self.id = None
 
     def error(self, response):
         data = json.loads(response)
@@ -25,8 +26,8 @@ class Transaction(object):
 
     def charge(self):
         post_data = self.get_data()
-        transaction_url = self.BASE_URL + 'transactions'
-        pagarme_response = requests.post(transaction_url, data=post_data)
+        url = self.BASE_URL + 'transactions'
+        pagarme_response = requests.post(url, data=post_data)
         if pagarme_response.status_code == 200:
             self.handle_response(json.loads(pagarme_response.content))
         else:
@@ -62,6 +63,17 @@ class Transaction(object):
             raise ValueError('Transaction id not suplied')
         url = self.BASE_URL + 'transactions/' + str(id)
         pagarme_response = requests.get(url, data=self.get_data())
+        if pagarme_response.status_code == 200:
+            self.handle_response(json.loads(pagarme_response.content))
+        else:
+            self.error(pagarme_response.content)
+
+    def refund(self):
+        if self.id is None:
+            raise PygarmeTransactionError('Transaction not paid')
+
+        url = self.BASE_URL + 'transactions/' + str(self.id) + '/refund'
+        pagarme_response = requests.post(url, data=self.get_data())
         if pagarme_response.status_code == 200:
             self.handle_response(json.loads(pagarme_response.content))
         else:
