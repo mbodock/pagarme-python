@@ -3,7 +3,7 @@
 import json
 import requests
 
-from .exceptions import PygarmeTransactionApiError, PygarmeTransactionError
+from .exceptions import PygarmeTransactionApiError, NotPaidException 
 
 
 class Transaction(object):
@@ -70,7 +70,7 @@ class Transaction(object):
 
     def refund(self):
         if self.id is None:
-            raise PygarmeTransactionError('Transaction not paid')
+            raise NotPaidException('Id not suplied')
 
         url = self.BASE_URL + 'transactions/' + str(self.id) + '/refund'
         pagarme_response = requests.post(url, data=self.get_data())
