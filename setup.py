@@ -23,7 +23,7 @@ setup(
     license='MIT',
     description='Pagar.me Python library',
     long_description=open('docs/index.rst').read(),
-    url='https://github.com/allisson/pagarme-python',
+    url='https://github.com/pagarme/pagarme-python',
     include_package_data=True,
     zip_safe=False,
     install_requires=requires,
