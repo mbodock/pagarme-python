@@ -1,14 +1,22 @@
 pagarme-python
 ==============
 
-Pagar.me's Python API
+Pagar.me Python library
 
-.. image:: https://travis-ci.org/allisson/pagarme-python.png?branch=master
-  :target: https://travis-ci.org/allisson/pagarme-python
+Documentation
+-------------
+
+- `API Guide <http://pagar.me/docs>`_
+- `Python Docs <http://pagarme-python.readthedocs.org/>`_
+
+Code Status
+-------------
+.. image:: https://travis-ci.org/pagarme/pagarme-python.png?branch=master
+  :target: https://travis-ci.org/pagarme/pagarme-python
   :alt: Build Status - Travis CI
 
-.. image:: https://coveralls.io/repos/allisson/pagarme-python/badge.png?branch=master
-  :target: https://coveralls.io/r/allisson/pagarme-python?branch=master
+.. image:: https://coveralls.io/repos/pagarme/pagarme-python/badge.png?branch=master
+  :target: https://coveralls.io/r/pagarme/pagarme-python?branch=master
   :alt: Coverage Status - Coveralls
 
 .. image:: https://pypip.in/download/pagarme-python/badge.svg?period=month
@@ -27,4 +35,7 @@ Pagar.me's Python API
   :target: https://pypi.python.org/pypi/pagarme-python
   :alt: Supported Python versions
 
-- `Documentação <http://pagarme-python.readthedocs.org/>`_
+License
+-------------
+Pagar.me Python library is released under the `MIT License <http://www.opensource.org/licenses/MIT>`_.
+
