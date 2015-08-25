@@ -59,3 +59,13 @@ class TransactionTestCase(PygarmeTestCase):
         transaction.find_by_id(314)
         with self.assertRaises(PygarmeTransactionApiError):
             transaction.refund()
+
+    def test_metadata_is_sended_(self):
+        transaction = Transaction(
+            api_key='apikey',
+            amount=314,
+            card_hash='cardhash',
+            metadata={'sku': 'foo bar'},
+        )
+        self.assertEqual('foo bar', transaction.get_data()['metadata']['sku'])
+

@@ -9,13 +9,16 @@ from .exceptions import PygarmeTransactionApiError, PygarmeTransactionError, Not
 class Transaction(object):
     BASE_URL = 'https://api.pagar.me/1/'
 
-    def __init__(self, api_key=None, amount=None, card_hash=None, payment_method='credit_card', installments=1, postback_url=None):
+    def __init__(self, api_key=None, amount=None, card_hash=None,
+            payment_method='credit_card', installments=1,
+            postback_url=None, metadata={}):
         self.amount = amount
         self.api_key = api_key
         self.card_hash = card_hash
         self.payment_method = payment_method
         self.installments = installments
         self.postback_url = postback_url
+        self.metadata = metadata
         self.id = None
 
     def error(self, response):
@@ -53,6 +56,9 @@ class Transaction(object):
             d['card_hash'] = self.card_hash
             d['installments'] = self.installments
             d['payment_method'] = self.payment_method
+
+        if self.metadata:
+            d['metadata'] = self.metadata
 
         if self.postback_url:
             d['postback_url'] = self.postback_url
