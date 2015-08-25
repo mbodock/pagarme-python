@@ -2,7 +2,7 @@
 
 import mock
 
-from pygar_me.transaction import Transaction, PygarmeTransactionApiError, PygarmeTransactionError
+from pygar_me.transaction import Transaction, PygarmeTransactionApiError, PygarmeTransactionError, NotPaidException
 
 from .mocks import fake_request, fake_request_fail, fake_request_refund
 from .pygarme_test import PygarmeTestCase
@@ -47,9 +47,9 @@ class TransactionTestCase(PygarmeTestCase):
         transaction.refund()
         self.assertEqual('refunded', transaction.status)
 
-    def test_refund_transaction_before_get(self):
+    def test_refund_transaction_before_set_id(self):
         transaction = Transaction(api_key='apikey')
-        with self.assertRaises(PygarmeTransactionError):
+        with self.assertRaises(NotPaidException):
             transaction.refund()
 
     @mock.patch('requests.get', mock.Mock(side_effect=fake_request))

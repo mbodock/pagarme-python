@@ -3,7 +3,7 @@
 import json
 import requests
 
-from .exceptions import PygarmeTransactionApiError, NotPaidException 
+from .exceptions import PygarmeTransactionApiError, PygarmeTransactionError, NotPaidException
 
 
 class Transaction(object):
