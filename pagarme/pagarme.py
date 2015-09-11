@@ -1,5 +1,6 @@
 # encoding: utf-8
 
+import hashlib
 import json
 import requests
 
@@ -60,3 +61,8 @@ class Pagarme(object):
             transactions.append(transaction)
 
         return transactions
+
+    def validate_fingerprint(self, object_id, fingerprint):
+        code = str(object_id) + '#' + self.api_key
+        sha1_hash = hashlib.sha1(code).hexdigest()
+        return fingerprint == sha1_hash

@@ -63,3 +63,7 @@ class PagarmeTestCase(unittest.TestCase):
         pagarme = Pagarme(self.api_key)
         with self.assertRaises(PagarmeApiError):
             transactions = pagarme.all_transactions(page=2,count=3)
+
+    def test_validade_figerprint(self):
+        pagarme = Pagarme(self.api_key)
+        self.assertTrue(pagarme.validate_fingerprint(1, '7eaf1eae64ab8d91bcd2c315350a7e9b321808ee'))
