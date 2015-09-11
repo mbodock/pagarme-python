@@ -11,7 +11,7 @@ class Transaction(object):
 
     def __init__(self, api_key=None, amount=None, card_hash=None,
             payment_method='credit_card', installments=1,
-            postback_url=None, metadata={}, soft_descriptor=''):
+            postback_url=None, metadata={}, soft_descriptor='', **kwargs):
         self.amount = amount
         self.api_key = api_key
         self.card_hash = card_hash
@@ -21,6 +21,11 @@ class Transaction(object):
         self.metadata = metadata
         self.soft_descriptor = soft_descriptor[:13]
         self.id = None
+        self.data = {}
+
+        for key, value in kwargs.iteritems():
+            self.data[key] = value
+
 
     def error(self, response):
         data = json.loads(response)
@@ -46,12 +51,12 @@ class Transaction(object):
         self.response_data = data
 
     def get_data(self):
-        return self.__dict__()
+        self.data = self.__dict__()
+        return self.data
 
     def __dict__(self):
-        d = {
-            'api_key': self.api_key,
-        }
+        d = self.data
+        d['api_key'] = self.api_key
         if self.amount:
             d['amount'] = self.amount
             d['card_hash'] = self.card_hash

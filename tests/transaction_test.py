@@ -69,3 +69,12 @@ class TransactionTestCase(PagarmeTestCase):
         )
         self.assertEqual('foo bar', transaction.get_data()['metadata']['sku'])
 
+    def test_transaction_can_have_any_arguments(self):
+        transaction = Transaction(
+            api_key='apikey',
+            amount=314,
+            card_hash='cardhash',
+            any_argument='any_value',
+        )
+        self.assertIn('any_argument', transaction.get_data())
+

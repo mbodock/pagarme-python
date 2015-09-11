@@ -18,7 +18,8 @@ class Pagarme(object):
         card_hash=None,
         payment_method='credit_card',
         installments=1,
-        postback_url=None):
+        postback_url=None,
+        **kwargs):
 
         if not amount:
             raise ValueError('You should suply the value')
@@ -29,7 +30,7 @@ class Pagarme(object):
         if not installments:
             raise ValueError('Invalid installments')
 
-        return Transaction(api_key=self.api_key, amount=amount, card_hash=card_hash, payment_method=payment_method, installments=installments, postback_url=postback_url)
+        return Transaction(api_key=self.api_key, amount=amount, card_hash=card_hash, payment_method=payment_method, installments=installments, postback_url=postback_url, **kwargs)
 
     def error(self, response):
         data = json.loads(response)
