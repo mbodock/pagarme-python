@@ -3,7 +3,7 @@
 import json
 import requests
 
-from .exceptions import PagarmeTransactionApiError, PagarmeTransactionError, NotPaidException
+from .exceptions import PagarmeTransactionApiError, PagarmeTransactionError, NotPaidException, NotBoundException
 
 
 class Transaction(object):
@@ -49,6 +49,17 @@ class Transaction(object):
         self.postback_url = data['postback_url']
         self.metadata = data['metadata']
         self.response_data = data
+
+    def capture(self):
+        if self.id is None:
+            raise NotBoundException('First try search your transaction')
+        url = self.BASE_URL + 'transactions/' + str(self.id) + '/caputre'
+        data = {'api_key': self.api_key}
+        pagarme_response = requests.post(url, data=data)
+        if pagarme_response.status_code == 200:
+            self.handle_response(json.loads(pagarme_response.content))
+        else:
+            self.error(pagarme_response.content)
 
     def get_data(self):
         self.data = self.__dict__()

@@ -2,7 +2,7 @@
 
 import mock
 
-from pagarme.transaction import Transaction, PagarmeTransactionApiError, PagarmeTransactionError, NotPaidException
+from pagarme.transaction import Transaction, PagarmeTransactionApiError, PagarmeTransactionError, NotPaidException, NotBoundException
 
 from .mocks import fake_request, fake_request_fail, fake_request_refund
 from .pagarme_test import PagarmeTestCase
@@ -78,3 +78,32 @@ class TransactionTestCase(PagarmeTestCase):
         )
         self.assertIn('any_argument', transaction.get_data())
 
+    @mock.patch('requests.post', mock.Mock(side_effect=fake_request))
+    def test_transaction_caputre_later(self):
+        transaction = Transaction(
+            api_key='apikey',
+            amount=314,
+            card_hash='cardhash',
+            capture=False,
+        )
+        transaction.charge()
+        transaction.capture()
+
+    @mock.patch('requests.post', mock.Mock(side_effect=fake_request_fail))
+    def test_transaction_caputre_later_wihtout_charger(self):
+        transaction = Transaction(
+            api_key='apikey',
+            amount=314,
+            card_hash='cardhash',
+            capture=False,
+        )
+        with self.assertRaises(NotBoundException):
+            transaction.capture()
+
+    @mock.patch('requests.get', mock.Mock(side_effect=fake_request))
+    @mock.patch('requests.post', mock.Mock(side_effect=fake_request_fail))
+    def test_transaction_caputre_later_fails(self):
+        transaction = Transaction(api_key='apikey')
+        transaction.find_by_id(314)
+        with self.assertRaises(PagarmeTransactionApiError):
+            transaction.capture()
