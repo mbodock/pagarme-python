@@ -3,11 +3,11 @@
 import json
 import requests
 
-from .exceptions import PygarmeApiError
+from .exceptions import PagarmeApiError
 from .transaction import Transaction
 
 
-class Pygarme(object):
+class Pagarme(object):
     def __init__(self, api_key=None):
         if not api_key:
             raise ValueError('You should suply the api key.')
@@ -35,7 +35,7 @@ class Pygarme(object):
         data = json.loads(response)
         e = data['errors'][0]
         error_string = e['type'] + ' - ' + e['message']
-        raise PygarmeApiError(error_string)
+        raise PagarmeApiError(error_string)
 
     def find_transaction_by_id(self, id):
         transaction = Transaction(api_key=self.api_key)

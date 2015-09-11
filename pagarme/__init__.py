@@ -1,4 +1,4 @@
 # encoding: utf-8
 
-from .pygarme import Pygarme
+from .pagarme import Pagarme
 from .exceptions import *

@@ -3,7 +3,7 @@
 import json
 import requests
 
-from .exceptions import PygarmeTransactionApiError, PygarmeTransactionError, NotPaidException
+from .exceptions import PagarmeTransactionApiError, PagarmeTransactionError, NotPaidException
 
 
 class Transaction(object):
@@ -26,7 +26,7 @@ class Transaction(object):
         data = json.loads(response)
         e = data['errors'][0]
         error_string = e['type'] + ' - ' + e['message']
-        raise PygarmeTransactionApiError(error_string)
+        raise PagarmeTransactionApiError(error_string)
 
     def charge(self):
         post_data = self.get_data()

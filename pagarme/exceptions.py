@@ -1,9 +1,9 @@
 # encoding: utf-8
 
 
-class PygarmeApiError(Exception): pass
+class PagarmeApiError(Exception): pass
 
 
-class PygarmeTransactionApiError(Exception): pass
-class PygarmeTransactionError(Exception): pass
-class NotPaidException(PygarmeTransactionError): pass
+class PagarmeTransactionApiError(Exception): pass
+class PagarmeTransactionError(Exception): pass
+class NotPaidException(PagarmeTransactionError): pass

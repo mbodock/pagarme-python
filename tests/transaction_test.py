@@ -2,13 +2,13 @@
 
 import mock
 
-from pygar_me.transaction import Transaction, PygarmeTransactionApiError, PygarmeTransactionError, NotPaidException
+from pagarme.transaction import Transaction, PagarmeTransactionApiError, PagarmeTransactionError, NotPaidException
 
 from .mocks import fake_request, fake_request_fail, fake_request_refund
-from .pygarme_test import PygarmeTestCase
+from .pagarme_test import PagarmeTestCase
 
 
-class TransactionTestCase(PygarmeTestCase):
+class TransactionTestCase(PagarmeTestCase):
 
     @mock.patch('requests.post', mock.Mock(side_effect=fake_request))
     def test_charge(self):
@@ -19,7 +19,7 @@ class TransactionTestCase(PygarmeTestCase):
     @mock.patch('requests.post', mock.Mock(side_effect=fake_request_fail))
     def test_charge_fail(self):
         transaction = Transaction(api_key='apikey', amount=314, card_hash='foobar', payment_method='credit_card', installments=1, postback_url='https://post.back.url')
-        with self.assertRaises(PygarmeTransactionApiError):
+        with self.assertRaises(PagarmeTransactionApiError):
             transaction.charge()
 
     @mock.patch('requests.get', mock.Mock(side_effect=fake_request))
@@ -36,7 +36,7 @@ class TransactionTestCase(PygarmeTestCase):
     @mock.patch('requests.get', mock.Mock(side_effect=fake_request_fail))
     def test_get_transaction_by_id_fails(self):
         transaction = Transaction(api_key='apikey')
-        with self.assertRaises(PygarmeTransactionApiError):
+        with self.assertRaises(PagarmeTransactionApiError):
             transaction.find_by_id(314)
 
     @mock.patch('requests.get', mock.Mock(side_effect=fake_request))
@@ -57,7 +57,7 @@ class TransactionTestCase(PygarmeTestCase):
     def test_refund_transaction_fail(self):
         transaction = Transaction(api_key='apikey')
         transaction.find_by_id(314)
-        with self.assertRaises(PygarmeTransactionApiError):
+        with self.assertRaises(PagarmeTransactionApiError):
             transaction.refund()
 
     def test_metadata_is_sended_(self):
