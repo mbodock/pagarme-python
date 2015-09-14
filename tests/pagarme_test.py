@@ -6,12 +6,19 @@ import unittest
 from pagarme import Pagarme, PagarmeApiError
 from pagarme.transaction import Transaction
 
-from .mocks import fake_request, fake_request_fail, fake_request_list
-
+from .mocks import (
+    fake_request,
+    fake_request_fail,
+    fake_request_list,
+    fake_create_plan,
+    fake_get_plan,
+    fake_error_plan,)
 
 class PagarmeTestCase(unittest.TestCase):
     def setUp(self):
         self.api_key = 'keydeteste'
+
+class PagarmeApiTestCase(PagarmeTestCase):
 
     def test_can_instantiate(self):
         pagarme = Pagarme(self.api_key)
@@ -67,3 +74,38 @@ class PagarmeTestCase(unittest.TestCase):
     def test_validade_figerprint(self):
         pagarme = Pagarme(self.api_key)
         self.assertTrue(pagarme.validate_fingerprint(1, '7eaf1eae64ab8d91bcd2c315350a7e9b321808ee'))
+
+    @mock.patch('requests.post', mock.Mock(side_effect=fake_create_plan))
+    def test_create_plan(self):
+        pagarme = Pagarme(self.api_key)
+        plan = pagarme.start_plan(name='Test Plan', amount=314, days=30)
+        plan.create()
+        self.assertEqual(20112, plan.data['id'])
+
+    def test_create_plan_without_amount(self):
+        pagarme = Pagarme(self.api_key)
+        with self.assertRaises(ValueError):
+            pagarme.start_plan(name='Test Plan', amount=314)
+
+    def test_create_plan_without_days(self):
+        pagarme = Pagarme(self.api_key)
+        with self.assertRaises(ValueError):
+            pagarme.start_plan(name='Test Plan', days=30)
+
+    @mock.patch('requests.get', mock.Mock(side_effect=fake_get_plan))
+    def test_find_plan_by_id(self):
+        pagarme = Pagarme(self.api_key)
+        plan = pagarme.find_plan_by_id(20112)
+        self.assertEqual(20112, plan.data['id'])
+
+    @mock.patch('requests.get', mock.Mock(side_effect=fake_request_list))
+    def test_find_all_plans(self):
+        pagarme = Pagarme(self.api_key)
+        plans = pagarme.all_plans()
+        self.assertIsInstance(plans, list)
+
+    @mock.patch('requests.get', mock.Mock(side_effect=fake_error_plan))
+    def test_find_all_plans_error(self):
+        pagarme = Pagarme(self.api_key)
+        with self.assertRaises(PagarmeApiError):
+            pagarme.all_plans()

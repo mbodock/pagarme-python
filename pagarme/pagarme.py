@@ -5,6 +5,7 @@ import json
 import requests
 
 from .exceptions import PagarmeApiError
+from .subscription import Plan
 from .transaction import Transaction
 
 
@@ -47,11 +48,12 @@ class Pagarme(object):
 
     def all_transactions(self, page=1, count=10):
         data = {
+            'api_key': self.api_key,
             'page': page,
             'count': count,
         }
         url = Transaction.BASE_URL + 'transactions'
-        pagarme_response = requests.get(url, data=data)
+        pagarme_response = requests.get(url, params=data)
         if pagarme_response.status_code != 200:
             self.error(pagarme_response.content)
         responses = json.loads(pagarme_response.content)
@@ -67,3 +69,56 @@ class Pagarme(object):
         code = str(object_id) + '#' + self.api_key
         sha1_hash = hashlib.sha1(code).hexdigest()
         return fingerprint == sha1_hash
+
+    def start_plan(
+        self,
+        name,
+        amount=None,
+        days=None,
+        payment_methods=['boleto', 'credit_card'],
+        color=None,
+        charges=1,
+        installments=1,
+        trial_days=0,
+        **kwargs):
+
+        if not isinstance(amount, int):
+            raise ValueError('Amount should be an int')
+        if days is None:
+            raise ValueError('Missing days')
+
+        plan = Plan(
+            api_key=self.api_key,
+            amount=amount,
+            name=name,
+            days=days,
+            installments=installments,
+            payment_methods=payment_methods,
+            color=color,
+            charges=charges,
+            trial_days=trial_days,
+            **kwargs)
+        return plan
+
+    def find_plan_by_id(self, id):
+        plan = Plan(self.api_key)
+        plan.find_by_id(id)
+        return plan
+
+    def all_plans(self, page=1, count=10):
+        data = {
+            'api_key': self.api_key,
+            'page': page,
+            'count': count,
+        }
+        url = Plan.BASE_URL + 'plans'
+        pagarme_response = requests.get(url, params=data)
+        if pagarme_response.status_code != 200:
+            self.error(pagarme_response.content)
+        responses = json.loads(pagarme_response.content)
+        plans = []
+        for response in responses:
+            plan = Plan(api_key=self.api_key)
+            plan.handle_response(response)
+            plans.append(plan)
+        return plans

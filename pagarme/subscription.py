@@ -8,7 +8,7 @@ from .exceptions import PagarmeApiError
 class Plan(object):
     BASE_URL = 'https://api.pagar.me/1/'
 
-    def __init__(self, api_key='', name='', installments=1, payment_methods=['boleto', 'credit_card'],
+    def __init__(self, api_key='', name='', amount=None, days=None, installments=1, payment_methods=['boleto', 'credit_card'],
                  color=None, charges=1, trial_days=0, **kwargs):
 
         if not api_key:
@@ -18,11 +18,14 @@ class Plan(object):
                 raise ValueError('Invalid payment method, try a list with "boleto" and/or "credit_card"')
 
         self.data = {'api_key': api_key}
+        self.data['name'] = name
+        self.data['amount'] = amount
         self.data['installments'] = installments
         self.data['payment_methods'] = payment_methods
         self.data['color'] = color
         self.data['charges'] = charges
         self.data['trial_days'] = trial_days
+        self.data['days'] = days
 
         self.data.update(kwargs)
 
