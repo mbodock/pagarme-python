@@ -5,7 +5,7 @@ import json
 import requests
 
 from .exceptions import PagarmeApiError
-from .subscription import Plan
+from .subscription import Plan, Subscription
 from .transaction import Transaction
 
 
@@ -98,6 +98,7 @@ class Pagarme(object):
             charges=charges,
             trial_days=trial_days,
             **kwargs)
+
         return plan
 
     def find_plan_by_id(self, id):
@@ -122,3 +123,18 @@ class Pagarme(object):
             plan.handle_response(response)
             plans.append(plan)
         return plans
+
+    def start_subscription(
+        self,
+        plan_id=None,
+        plan=None,
+        card_id=None,
+        card_hash=None,
+        postback_url=None,
+        customer=None,
+        **kwargs):
+
+        if plan_id is None:
+            plan_id = plan.data['id']
+        sub = Subscription(api_key=self.api_key, plan_id=plan_id, card_id=card_id, card_hash=card_hash, postback_url=postback_url, customer=customer, **kwargs)
+        return sub

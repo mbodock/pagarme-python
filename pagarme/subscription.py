@@ -60,12 +60,20 @@ class Subscription(object):
 
     BASE_URL = 'https://api.pagar.me/1/subscriptions'
 
-    def __init__(self, api_key=None, plan_id=None, card_id=None, card_hash=None, postback_url=None, customer=None, **kwargs):
+    def __init__(
+            self,
+            api_key=None,
+            plan_id=None,
+            card_id=None,
+            card_hash=None,
+            postback_url=None,
+            customer=None,
+            **kwargs):
         if not api_key:
             raise ValueError('Invalid api_key')
         if plan_id and not isinstance(plan_id, int):
             raise ValueError('plan_id should be a int')
-        if customer and not customer.email:
+        if customer and not customer.data['email']:
             raise ValueError('Customer email not found')
 
         self.data = {

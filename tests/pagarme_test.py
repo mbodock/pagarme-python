@@ -4,6 +4,7 @@ import mock
 import unittest
 
 from pagarme import Pagarme, PagarmeApiError
+from pagarme.customer import Customer
 from pagarme.transaction import Transaction
 
 from .mocks import (
@@ -12,7 +13,8 @@ from .mocks import (
     fake_request_list,
     fake_create_plan,
     fake_get_plan,
-    fake_error_plan,)
+    fake_error_plan,
+    fake_get_sub,)
 
 class PagarmeTestCase(unittest.TestCase):
     def setUp(self):
@@ -109,3 +111,17 @@ class PagarmeApiTestCase(PagarmeTestCase):
         pagarme = Pagarme(self.api_key)
         with self.assertRaises(PagarmeApiError):
             pagarme.all_plans()
+
+    @mock.patch('requests.post', mock.Mock(side_effect=fake_get_sub))
+    def test_create_subscription(self):
+        pagarme = Pagarme(self.api_key)
+        sub = pagarme.start_subscription(plan_id=20112, card_hash='hashcardlong', customer=Customer(email='teste@email.com'))
+        sub.create()
+
+    @mock.patch('requests.post', mock.Mock(side_effect=fake_get_sub))
+    @mock.patch('requests.get', mock.Mock(side_effect=fake_get_plan))
+    def test_create_subscription_with_plan(self):
+        pagarme = Pagarme(self.api_key)
+        plan = pagarme.find_plan_by_id(20112)
+        sub = pagarme.start_subscription(plan=plan, card_hash='hashcardlong', customer=Customer(email='teste@email.com'))
+        sub.create()
