@@ -7,7 +7,7 @@ from .exceptions import PagarmeTransactionApiError, PagarmeTransactionError, Not
 
 
 class Transaction(object):
-    BASE_URL = 'https://api.pagar.me/1/'
+    BASE_URL = 'https://api.pagar.me/1/transactions'
 
     def __init__(self, api_key=None, amount=None, card_hash=None,
             payment_method='credit_card', installments=1,
@@ -35,7 +35,7 @@ class Transaction(object):
 
     def charge(self):
         post_data = self.get_data()
-        url = self.BASE_URL + 'transactions'
+        url = self.BASE_URL
         pagarme_response = requests.post(url, data=post_data)
         if pagarme_response.status_code == 200:
             self.handle_response(json.loads(pagarme_response.content))
@@ -53,7 +53,7 @@ class Transaction(object):
     def capture(self):
         if self.id is None:
             raise NotBoundException('First try search your transaction')
-        url = self.BASE_URL + 'transactions/' + str(self.id) + '/caputre'
+        url = self.BASE_URL + '/' + str(self.id) + '/caputre'
         data = {'api_key': self.api_key}
         pagarme_response = requests.post(url, data=data)
         if pagarme_response.status_code == 200:
@@ -85,7 +85,7 @@ class Transaction(object):
     def find_by_id(self, id=None):
         if not id or not isinstance(id, int):
             raise ValueError('Transaction id not suplied')
-        url = self.BASE_URL + 'transactions/' + str(id)
+        url = self.BASE_URL + '/' + str(id)
         pagarme_response = requests.get(url, data=self.get_data())
         if pagarme_response.status_code == 200:
             self.handle_response(json.loads(pagarme_response.content))
@@ -96,7 +96,7 @@ class Transaction(object):
         if self.id is None:
             raise NotPaidException('Id not suplied')
 
-        url = self.BASE_URL + 'transactions/' + str(self.id) + '/refund'
+        url = self.BASE_URL + '/' + str(self.id) + '/refund'
         pagarme_response = requests.post(url, data=self.get_data())
         if pagarme_response.status_code == 200:
             self.handle_response(json.loads(pagarme_response.content))

@@ -6,7 +6,7 @@ import requests
 from .exceptions import PagarmeApiError
 
 class Plan(object):
-    BASE_URL = 'https://api.pagar.me/1/'
+    BASE_URL = 'https://api.pagar.me/1/plans'
 
     def __init__(self, api_key='', name='', amount=None, days=None, installments=1, payment_methods=['boleto', 'credit_card'],
                  color=None, charges=1, trial_days=0, **kwargs):
@@ -39,7 +39,7 @@ class Plan(object):
         raise PagarmeApiError(error_string)
 
     def create(self):
-        url = self.BASE_URL + 'plans'
+        url = self.BASE_URL
         pagarme_response = requests.post(url, data=self.data)
         if pagarme_response.status_code == 200:
             self.handle_response(json.loads(pagarme_response.content))
@@ -47,7 +47,7 @@ class Plan(object):
             self.error(pagarme_response.content)
 
     def find_by_id(self, id):
-        url = self.BASE_URL + 'plans/' + str(id)
+        url = self.BASE_URL + '/' + str(id)
         data = {'api_key': self.data['api_key']}
         pagarme_response = requests.get(url, params=data)
         if pagarme_response.status_code == 200:
@@ -58,7 +58,7 @@ class Plan(object):
 
 class Subscription(object):
 
-    BASE_URL = 'https://api.pagar.me/1/'
+    BASE_URL = 'https://api.pagar.me/1/subscriptions'
 
     def __init__(self, api_key=None, plan_id=None, card_id=None, card_hash=None, postback_url=None, customer=None, **kwargs):
         if not api_key:
@@ -90,7 +90,7 @@ class Subscription(object):
         return data
 
     def create(self):
-        url = self.BASE_URL + 'subscriptions'
+        url = self.BASE_URL
         pagarme_response = requests.post(url, data=self.get_data())
         if pagarme_response.status_code == 200:
             self.handle_response(json.loads(pagarme_response.content))

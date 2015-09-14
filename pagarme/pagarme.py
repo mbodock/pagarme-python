@@ -52,7 +52,7 @@ class Pagarme(object):
             'page': page,
             'count': count,
         }
-        url = Transaction.BASE_URL + 'transactions'
+        url = Transaction.BASE_URL
         pagarme_response = requests.get(url, params=data)
         if pagarme_response.status_code != 200:
             self.error(pagarme_response.content)
@@ -111,7 +111,7 @@ class Pagarme(object):
             'page': page,
             'count': count,
         }
-        url = Plan.BASE_URL + 'plans'
+        url = Plan.BASE_URL
         pagarme_response = requests.get(url, params=data)
         if pagarme_response.status_code != 200:
             self.error(pagarme_response.content)
