@@ -3,15 +3,24 @@
 import json
 import requests
 
-from .exceptions import PagarmeTransactionApiError, PagarmeTransactionError, NotPaidException, NotBoundException
+from .exceptions import PagarmeTransactionApiError, NotPaidException, NotBoundException
 
 
 class Transaction(object):
     BASE_URL = 'https://api.pagar.me/1/transactions'
 
-    def __init__(self, api_key=None, amount=None, card_hash=None,
-            payment_method='credit_card', installments=1,
-            postback_url=None, metadata={}, soft_descriptor='', **kwargs):
+    def __init__(
+            self,
+            api_key=None,
+            amount=None,
+            card_hash=None,
+            payment_method='credit_card',
+            installments=1,
+            postback_url=None,
+            metadata={},
+            soft_descriptor='',
+            **kwargs):
+
         self.amount = amount
         self.api_key = api_key
         self.card_hash = card_hash
@@ -25,7 +34,6 @@ class Transaction(object):
 
         for key, value in kwargs.iteritems():
             self.data[key] = value
-
 
     def error(self, response):
         data = json.loads(response)

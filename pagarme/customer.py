@@ -22,7 +22,7 @@ class Customer(object):
         }
 
     def to_dict(self):
-        d= {}
+        d = {}
         for key, value in self.data.iteritems():
             if value is not None:
                 new_key = 'customer[{key}]'.format(key=key)

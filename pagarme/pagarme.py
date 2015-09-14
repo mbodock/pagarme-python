@@ -33,7 +33,14 @@ class Pagarme(object):
         if not installments:
             raise ValueError('Invalid installments')
 
-        return Transaction(api_key=self.api_key, amount=amount, card_hash=card_hash, payment_method=payment_method, installments=installments, postback_url=postback_url, **kwargs)
+        return Transaction(
+            api_key=self.api_key,
+            amount=amount,
+            card_hash=card_hash,
+            payment_method=payment_method,
+            installments=installments,
+            postback_url=postback_url,
+            **kwargs)
 
     def error(self, response):
         data = json.loads(response)
@@ -71,16 +78,16 @@ class Pagarme(object):
         return fingerprint == sha1_hash
 
     def start_plan(
-        self,
-        name,
-        amount=None,
-        days=None,
-        payment_methods=['boleto', 'credit_card'],
-        color=None,
-        charges=1,
-        installments=1,
-        trial_days=0,
-        **kwargs):
+            self,
+            name,
+            amount=None,
+            days=None,
+            payment_methods=['boleto', 'credit_card'],
+            color=None,
+            charges=1,
+            installments=1,
+            trial_days=0,
+            **kwargs):
 
         if not isinstance(amount, int):
             raise ValueError('Amount should be an int')
@@ -125,16 +132,21 @@ class Pagarme(object):
         return plans
 
     def start_subscription(
-        self,
-        plan_id=None,
-        plan=None,
-        card_id=None,
-        card_hash=None,
-        postback_url=None,
-        customer=None,
-        **kwargs):
+            self,
+            plan_id=None,
+            plan=None,
+            card_id=None,
+            card_hash=None,
+            postback_url=None,
+            customer=None,
+            **kwargs):
 
         if plan_id is None:
             plan_id = plan.data['id']
         sub = Subscription(api_key=self.api_key, plan_id=plan_id, card_id=card_id, card_hash=card_hash, postback_url=postback_url, customer=customer, **kwargs)
         return sub
+
+    def find_subscription_by_id(self, id):
+        s = Subscription(self.api_key)
+        s.find_by_id(id)
+        return s

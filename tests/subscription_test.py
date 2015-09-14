@@ -95,3 +95,9 @@ class SubscriptionTestCase(PagarmeTestCase):
                     plan_id=20112,
                     card_hash='longcardhash32432',
                     customer=Customer())
+
+    @mock.patch('requests.get', mock.Mock(side_effect=fake_error_sub))
+    def test_get_subscription_by_id_error(self):
+        sub = Subscription(api_key='api_key')
+        with self.assertRaises(PagarmeApiError):
+            sub.find_by_id(16892)

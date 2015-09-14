@@ -114,3 +114,13 @@ class Subscription(object):
         error_string = e['type'] + u' - ' + e['message']
         error_string = error_string.encode('utf-8')
         raise PagarmeApiError(error_string)
+
+    # TODO extract method to a base class, DRY
+    def find_by_id(self, id):
+        url = self.BASE_URL + '/' + str(id)
+        data = {'api_key': self.data['api_key']}
+        pagarme_response = requests.get(url, params=data)
+        if pagarme_response.status_code == 200:
+            self.handle_response(json.loads(pagarme_response.content))
+        else:
+            self.error(pagarme_response.content)

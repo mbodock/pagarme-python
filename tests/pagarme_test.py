@@ -125,3 +125,9 @@ class PagarmeApiTestCase(PagarmeTestCase):
         plan = pagarme.find_plan_by_id(20112)
         sub = pagarme.start_subscription(plan=plan, card_hash='hashcardlong', customer=Customer(email='teste@email.com'))
         sub.create()
+
+    @mock.patch('requests.get', mock.Mock(side_effect=fake_get_sub))
+    def test_find_subscription_by_id(self):
+        pagarme = Pagarme(self.api_key)
+        sub = pagarme.find_subscription_by_id(16892)
+        self.assertEqual(16892, sub.data['id'])
