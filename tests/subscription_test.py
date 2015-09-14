@@ -3,7 +3,7 @@
 import mock
 
 from pagarme.customer import Customer
-from pagarme.subscription import Plan, PagarmeApiError, Subscription
+from pagarme.subscription import Plan, PagarmeApiError, Subscription, NotBoundException
 
 from .mocks import fake_create_plan, fake_get_plan, fake_error_plan, fake_get_sub, fake_error_sub
 from .pagarme_test import PagarmeTestCase
@@ -101,3 +101,23 @@ class SubscriptionTestCase(PagarmeTestCase):
         sub = Subscription(api_key='api_key')
         with self.assertRaises(PagarmeApiError):
             sub.find_by_id(16892)
+
+    def test_cancel_unboud_subscription(self):
+        sub = Subscription(api_key='api_key')
+        with self.assertRaises(NotBoundException):
+            sub.cancel()
+
+    @mock.patch('requests.get', mock.Mock(side_effect=fake_get_sub))
+    @mock.patch('requests.post', mock.Mock(side_effect=fake_get_sub))
+    def test_cancel_subscription(self):
+        sub = Subscription(api_key='api_key')
+        sub.find_by_id(16892)
+        sub.cancel()
+
+    @mock.patch('requests.get', mock.Mock(side_effect=fake_get_sub))
+    @mock.patch('requests.post', mock.Mock(side_effect=fake_error_sub))
+    def test_cancel_subscription_error(self):
+        sub = Subscription(api_key='api_key')
+        sub.find_by_id(16892)
+        with self.assertRaises(PagarmeApiError):
+            sub.cancel()

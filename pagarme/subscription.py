@@ -3,7 +3,7 @@
 import json
 import requests
 
-from .exceptions import PagarmeApiError
+from .exceptions import PagarmeApiError, NotBoundException
 from .resource import AbstractResource
 
 class Plan(AbstractResource):
@@ -85,6 +85,16 @@ class Subscription(AbstractResource):
         url = self.BASE_URL + '/' + str(id)
         data = {'api_key': self.data['api_key']}
         pagarme_response = requests.get(url, params=data)
+        if pagarme_response.status_code == 200:
+            self.handle_response(json.loads(pagarme_response.content))
+        else:
+            self.error(pagarme_response.content)
+
+    def cancel(self):
+        if not self.data.get('id', False):
+            raise NotBoundException('First try search your subscription')
+        url = self.BASE_URL + '/{id}/cancel'.format(id=self.data['id'])
+        pagarme_response = requests.post(url, data={'api_key': self.data['api_key']})
         if pagarme_response.status_code == 200:
             self.handle_response(json.loads(pagarme_response.content))
         else:
