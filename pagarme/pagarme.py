@@ -14,13 +14,14 @@ class Pagarme(object):
             raise ValueError('You should suply the api key.')
         self.api_key = api_key
 
-    def start_transaction(self,
-        amount=None,
-        card_hash=None,
-        payment_method='credit_card',
-        installments=1,
-        postback_url=None,
-        **kwargs):
+    def start_transaction(
+            self,
+            amount=None,
+            card_hash=None,
+            payment_method='credit_card',
+            installments=1,
+            postback_url=None,
+            **kwargs):
 
         if not amount:
             raise ValueError('You should suply the value')

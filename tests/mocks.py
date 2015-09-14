@@ -120,3 +120,57 @@ def fake_request_refund(*args, **kwargs):
         }
     """
     return fake
+
+def fake_create_plan(*args, **kwargs):
+    fake = FakeResponse()
+    fake.content = """
+    {
+        "object":"plan",
+        "id":20112,
+        "amount":3100,
+        "days":30,
+        "name":"nome",
+        "trial_days":0,
+        "date_created":"2015-09-14T15:02:19.000Z",
+        "payment_methods":["boleto",
+        "credit_card"],
+        "color":null,
+        "charges":null,
+        "installments":1
+    }
+    """
+    return fake
+
+def fake_get_plan(*args, **kwargs):
+    fake = FakeResponse()
+    fake.content = """
+    {
+        "object":"plan",
+        "id":20112,
+        "amount":3100,
+        "days":30,
+        "name":"nome",
+        "trial_days":0,
+        "date_created":"2015-09-14T15:02:19.000Z",
+        "payment_methods":["boleto",
+        "credit_card"],
+        "color":null,
+        "charges":null,
+        "installments":1
+    }
+    """
+    return fake
+
+def fake_error_plan(*args, **kwargs):
+    fake = FakeResponse()
+    fake.content = """
+    {
+        "errors":[{"type":"not_found",
+        "parameter_name":null,
+        "message":"Plan não encontrado"}],
+        "url":"/plans/20234",
+        "method":"get"
+    }
+    """
+    fake.status_code = 404
+    return fake
