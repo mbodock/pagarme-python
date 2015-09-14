@@ -5,6 +5,7 @@ import requests
 
 from .exceptions import PagarmeApiError, NotBoundException
 from .resource import AbstractResource
+from .transaction import Transaction
 
 class Plan(AbstractResource):
     BASE_URL = 'https://api.pagar.me/1/plans'
@@ -99,3 +100,18 @@ class Subscription(AbstractResource):
             self.handle_response(json.loads(pagarme_response.content))
         else:
             self.error(pagarme_response.content)
+
+    def transactions(self):
+        if not self.data.get('id', False):
+            raise NotBoundException('First try search your subscription')
+        url = self.BASE_URL + '/{id}/transactions'.format(id=self.data['id'])
+        pagarme_response = requests.get(url, params={'api_key': self.data['api_key']})
+        if pagarme_response.status_code != 200:
+            self.error(pagarme_response.content)
+        response = json.loads(pagarme_response.content)
+        transactions = []
+        for transaction in response:
+            t = Transaction(self.data['api_key'])
+            t.handle_response(transaction)
+            transactions.append(t)
+        return transactions

@@ -4,8 +4,9 @@ import mock
 
 from pagarme.customer import Customer
 from pagarme.subscription import Plan, PagarmeApiError, Subscription, NotBoundException
+from pagarme.transaction import Transaction
 
-from .mocks import fake_create_plan, fake_get_plan, fake_error_plan, fake_get_sub, fake_error_sub
+from .mocks import fake_request_list, fake_create_plan, fake_get_plan, fake_error_plan, fake_get_sub, fake_error_sub
 from .pagarme_test import PagarmeTestCase
 
 
@@ -121,3 +122,22 @@ class SubscriptionTestCase(PagarmeTestCase):
         sub.find_by_id(16892)
         with self.assertRaises(PagarmeApiError):
             sub.cancel()
+
+    @mock.patch('requests.get', mock.Mock(side_effect=fake_request_list))
+    def test_get_subscriptions_transactions(self):
+        sub = Subscription(api_key='api_key')
+        sub.data['id'] = 16892
+        transactions = sub.transactions()
+        self.assertIsInstance(transactions[0], Transaction)
+
+    def test_get_subscriptions_transactions_unbounded(self):
+        sub = Subscription(api_key='api_key')
+        with self.assertRaises(NotBoundException):
+            transactions = sub.transactions()
+
+    @mock.patch('requests.get', mock.Mock(side_effect=fake_error_sub))
+    def test_get_subscriptions_transactions_fails(self):
+        sub = Subscription(api_key='api_key')
+        sub.data['id'] = 16892
+        with self.assertRaises(PagarmeApiError):
+            transactions = sub.transactions()
