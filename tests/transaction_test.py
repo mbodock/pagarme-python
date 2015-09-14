@@ -2,7 +2,7 @@
 
 import mock
 
-from pagarme.transaction import Transaction, PagarmeTransactionApiError, PagarmeTransactionError, NotPaidException, NotBoundException
+from pagarme.transaction import Transaction, PagarmeApiError, NotPaidException, NotBoundException
 
 from .mocks import fake_request, fake_request_fail, fake_request_refund
 from .pagarme_test import PagarmeTestCase
@@ -19,7 +19,7 @@ class TransactionTestCase(PagarmeTestCase):
     @mock.patch('requests.post', mock.Mock(side_effect=fake_request_fail))
     def test_charge_fail(self):
         transaction = Transaction(api_key='apikey', amount=314, card_hash='foobar', payment_method='credit_card', installments=1, postback_url='https://post.back.url')
-        with self.assertRaises(PagarmeTransactionApiError):
+        with self.assertRaises(PagarmeApiError):
             transaction.charge()
 
     @mock.patch('requests.get', mock.Mock(side_effect=fake_request))
@@ -28,15 +28,10 @@ class TransactionTestCase(PagarmeTestCase):
         transaction.find_by_id(314)
         self.assertEqual(314, transaction.id)
 
-    def test_get_transaction_by_id_with_invalid_id(self):
-        transaction = Transaction(api_key='apikey')
-        with self.assertRaises(ValueError):
-            transaction.find_by_id('foo bar')
-
     @mock.patch('requests.get', mock.Mock(side_effect=fake_request_fail))
     def test_get_transaction_by_id_fails(self):
         transaction = Transaction(api_key='apikey')
-        with self.assertRaises(PagarmeTransactionApiError):
+        with self.assertRaises(PagarmeApiError):
             transaction.find_by_id(314)
 
     @mock.patch('requests.get', mock.Mock(side_effect=fake_request))
@@ -57,7 +52,7 @@ class TransactionTestCase(PagarmeTestCase):
     def test_refund_transaction_fail(self):
         transaction = Transaction(api_key='apikey')
         transaction.find_by_id(314)
-        with self.assertRaises(PagarmeTransactionApiError):
+        with self.assertRaises(PagarmeApiError):
             transaction.refund()
 
     def test_metadata_is_sended_(self):
@@ -105,5 +100,5 @@ class TransactionTestCase(PagarmeTestCase):
     def test_transaction_caputre_later_fails(self):
         transaction = Transaction(api_key='apikey')
         transaction.find_by_id(314)
-        with self.assertRaises(PagarmeTransactionApiError):
+        with self.assertRaises(PagarmeApiError):
             transaction.capture()

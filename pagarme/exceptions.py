@@ -4,7 +4,6 @@
 class PagarmeApiError(Exception): pass
 
 
-class PagarmeTransactionApiError(Exception): pass
 class PagarmeTransactionError(Exception): pass
 class NotPaidException(PagarmeTransactionError): pass
 class NotBoundException(PagarmeTransactionError): pass

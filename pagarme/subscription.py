@@ -4,8 +4,9 @@ import json
 import requests
 
 from .exceptions import PagarmeApiError
+from .resource import AbstractResource
 
-class Plan(object):
+class Plan(AbstractResource):
     BASE_URL = 'https://api.pagar.me/1/plans'
 
     def __init__(self, api_key='', name='', amount=None, days=None, installments=1, payment_methods=['boleto', 'credit_card'],
@@ -29,23 +30,6 @@ class Plan(object):
 
         self.data.update(kwargs)
 
-    def handle_response(self, data):
-        self.data.update(data)
-
-    def error(self, response):
-        data = json.loads(response)
-        e = data['errors'][0]
-        error_string = e['type'] + ' - ' + e['message']
-        raise PagarmeApiError(error_string)
-
-    def create(self):
-        url = self.BASE_URL
-        pagarme_response = requests.post(url, data=self.data)
-        if pagarme_response.status_code == 200:
-            self.handle_response(json.loads(pagarme_response.content))
-        else:
-            self.error(pagarme_response.content)
-
     def find_by_id(self, id):
         url = self.BASE_URL + '/' + str(id)
         data = {'api_key': self.data['api_key']}
@@ -56,7 +40,7 @@ class Plan(object):
             self.error(pagarme_response.content)
 
 
-class Subscription(object):
+class Subscription(AbstractResource):
 
     BASE_URL = 'https://api.pagar.me/1/subscriptions'
 
@@ -97,25 +81,6 @@ class Subscription(object):
             data.update(self.customer.to_dict())
         return data
 
-    def create(self):
-        url = self.BASE_URL
-        pagarme_response = requests.post(url, data=self.get_data())
-        if pagarme_response.status_code == 200:
-            self.handle_response(json.loads(pagarme_response.content))
-        else:
-            self.error(pagarme_response.content)
-
-    def handle_response(self, data):
-        self.data.update(data)
-
-    def error(self, response):
-        data = json.loads(response)
-        e = data['errors'][0]
-        error_string = e['type'] + u' - ' + e['message']
-        error_string = error_string.encode('utf-8')
-        raise PagarmeApiError(error_string)
-
-    # TODO extract method to a base class, DRY
     def find_by_id(self, id):
         url = self.BASE_URL + '/' + str(id)
         data = {'api_key': self.data['api_key']}

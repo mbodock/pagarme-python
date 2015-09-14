@@ -6,6 +6,7 @@ import unittest
 from pagarme import Pagarme, PagarmeApiError
 from pagarme.customer import Customer
 from pagarme.transaction import Transaction
+from pagarme.resource import AbstractResource
 
 from .mocks import (
     fake_request,
@@ -19,6 +20,11 @@ from .mocks import (
 class PagarmeTestCase(unittest.TestCase):
     def setUp(self):
         self.api_key = 'keydeteste'
+
+class AbstractResourceTestCase(PagarmeTestCase):
+    def test_cant_instantiate_abstract_class(self):
+        with self.assertRaises(NotImplementedError):
+            AbstractResource()
 
 class PagarmeApiTestCase(PagarmeTestCase):
 
@@ -131,3 +137,15 @@ class PagarmeApiTestCase(PagarmeTestCase):
         pagarme = Pagarme(self.api_key)
         sub = pagarme.find_subscription_by_id(16892)
         self.assertEqual(16892, sub.data['id'])
+
+    @mock.patch('requests.get', mock.Mock(side_effect=fake_request_list))
+    def test_find_all_subscriptions(self):
+        pagarme = Pagarme(self.api_key)
+        plans = pagarme.all_subscriptions()
+        self.assertIsInstance(plans, list)
+
+    @mock.patch('requests.get', mock.Mock(side_effect=fake_error_plan))
+    def test_find_all_subscriptions_error(self):
+        pagarme = Pagarme(self.api_key)
+        with self.assertRaises(PagarmeApiError):
+            pagarme.all_subscriptions()

@@ -54,23 +54,7 @@ class Pagarme(object):
         return transaction
 
     def all_transactions(self, page=1, count=10):
-        data = {
-            'api_key': self.api_key,
-            'page': page,
-            'count': count,
-        }
-        url = Transaction.BASE_URL
-        pagarme_response = requests.get(url, params=data)
-        if pagarme_response.status_code != 200:
-            self.error(pagarme_response.content)
-        responses = json.loads(pagarme_response.content)
-        transactions = []
-        for response in responses:
-            transaction = Transaction(api_key=self.api_key)
-            transaction.handle_response(response)
-            transactions.append(transaction)
-
-        return transactions
+        return self.get_all_resources(Transaction, page, count)
 
     def validate_fingerprint(self, object_id, fingerprint):
         code = str(object_id) + '#' + self.api_key
@@ -114,22 +98,7 @@ class Pagarme(object):
         return plan
 
     def all_plans(self, page=1, count=10):
-        data = {
-            'api_key': self.api_key,
-            'page': page,
-            'count': count,
-        }
-        url = Plan.BASE_URL
-        pagarme_response = requests.get(url, params=data)
-        if pagarme_response.status_code != 200:
-            self.error(pagarme_response.content)
-        responses = json.loads(pagarme_response.content)
-        plans = []
-        for response in responses:
-            plan = Plan(api_key=self.api_key)
-            plan.handle_response(response)
-            plans.append(plan)
-        return plans
+        return self.get_all_resources(Plan, page, count)
 
     def start_subscription(
             self,
@@ -150,3 +119,24 @@ class Pagarme(object):
         s = Subscription(self.api_key)
         s.find_by_id(id)
         return s
+
+    def all_subscriptions(self, page=1, count=10):
+        return self.get_all_resources(Subscription, page, count)
+
+    def get_all_resources(self, Class, page, count):
+        data = {
+            'api_key': self.api_key,
+            'page': page,
+            'count': count,
+        }
+        url = Class.BASE_URL
+        pagarme_response = requests.get(url, params=data)
+        if pagarme_response.status_code != 200:
+            self.error(pagarme_response.content)
+        responses = json.loads(pagarme_response.content)
+        resources = []
+        for response in responses:
+            resource = Class(api_key=self.api_key)
+            resource.handle_response(response)
+            resources.append(resource)
+        return resources

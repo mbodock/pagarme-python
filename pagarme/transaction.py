@@ -3,10 +3,11 @@
 import json
 import requests
 
-from .exceptions import PagarmeTransactionApiError, NotPaidException, NotBoundException
+from .exceptions import PagarmeApiError, NotPaidException, NotBoundException
+from .resource import AbstractResource
 
 
-class Transaction(object):
+class Transaction(AbstractResource):
     BASE_URL = 'https://api.pagar.me/1/transactions'
 
     def __init__(
@@ -39,7 +40,7 @@ class Transaction(object):
         data = json.loads(response)
         e = data['errors'][0]
         error_string = e['type'] + ' - ' + e['message']
-        raise PagarmeTransactionApiError(error_string)
+        raise PagarmeApiError(error_string)
 
     def charge(self):
         post_data = self.get_data()
@@ -91,8 +92,6 @@ class Transaction(object):
         return d
 
     def find_by_id(self, id=None):
-        if not id or not isinstance(id, int):
-            raise ValueError('Transaction id not suplied')
         url = self.BASE_URL + '/' + str(id)
         pagarme_response = requests.get(url, data=self.get_data())
         if pagarme_response.status_code == 200:
