@@ -174,3 +174,94 @@ def fake_error_plan(*args, **kwargs):
     """
     fake.status_code = 404
     return fake
+
+def fake_get_sub(*args, **kwargs):
+    fake = FakeResponse()
+    fake.content = """
+    {
+        "object": "subscription",
+        "plan": {
+            "object": "plan",
+            "id": 12783,
+            "amount": 31000,
+            "days": 30,
+            "name": "Plano Ouro",
+            "trial_days": 0,
+            "date_created": "2015-03-03T16:56:32.000Z",
+            "payment_methods": ["boleto", "credit_card"],
+            "color": null,
+            "charges": null,
+            "installments": 1
+        },
+        "id": 16892,
+        "current_transaction": {
+            "object": "transaction",
+            "status": "waiting_payment",
+            "refuse_reason": null,
+            "status_reason": "acquirer",
+            "acquirer_response_code": null,
+            "acquirer_name": "development",
+            "authorization_code": null,
+            "soft_descriptor": null,
+            "tid": null,
+            "nsu": null,
+            "date_created": "2015-04-14T20:17:18.000Z",
+            "date_updated": "2015-04-14T20:17:19.000Z",
+            "amount": 31000,
+            "installments": 1,
+            "id": 194402,
+            "cost": 0,
+            "card_holder_name": null,
+            "card_last_digits": null,
+            "card_first_digits": null,
+            "card_brand": null,
+            "postback_url": null,
+            "payment_method": "boleto",
+            "antifraud_score": null,
+            "boleto_url": "https://pagar.me",
+            "boleto_barcode": "1234 5678",
+            "boleto_expiration_date": "2015-04-21T20:17:18.000Z",
+            "referer": "api_key",
+            "ip": "179.185.132.108",
+            "subscription_id": 16892,
+            "metadata": {}
+        },
+        "postback_url": "http://requestb.in/zyn5obzy",
+        "payment_method": "boleto",
+        "current_period_start": null,
+        "current_period_end": null,
+        "charges": 0,
+        "status": "unpaid",
+        "date_created": "2015-04-14T20:17:19.000Z",
+        "phone": null,
+        "address": null,
+        "customer": {
+            "object": "customer",
+            "document_number": null,
+            "document_type": "cpf",
+            "name": null,
+            "email": "api@test.com",
+            "born_at": null,
+            "gender": null,
+            "date_created": "2015-03-04T18:40:03.000Z",
+            "id": 14437
+        },
+        "card": null,
+        "metadata": null
+    }
+    """
+    return fake
+
+def fake_error_sub(*args, **kwargs):
+    fake = FakeResponse()
+    fake.content = """
+    {
+        "errors":[{"type":"not_found",
+        "parameter_name":null,
+        "message":"Subscription não encontrado"}],
+        "url":"/subscriptions/34234",
+        "method":"get"
+    }
+    """
+    fake.status_code = 404
+    return fake
