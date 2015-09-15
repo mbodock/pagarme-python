@@ -1,7 +1,16 @@
-# Pygar-me
+## pagarme-python
 
-Uma interface simplificada para o [Pagar.me](http://pagar.me/).
+Pagar.me Python library
 
+## Documentation
 
-[![Build status](https://travis-ci.org/mbodock/pygar-me.svg?branch=master)](https://secure.travis-ci.org/mbodock/pygar-me)
-[![Coverage](https://coveralls.io/repos/mbodock/pygar-me/badge.svg?branch=master&service=github)](https://coveralls.io/github/mbodock/pygar-me)
+* [API Guide](http://pagar.me/docs)
+
+## Code Status
+
+[![Build status](https://travis-ci.org/pagarme/pagarme-python.svg?branch=master)](https://secure.travis-ci.org/pagarme/pagarme-python)
+[![Coverage](https://coveralls.io/repos/pagarme/pagarme-python/badge.svg?branch=master&service=github)](https://coveralls.io/github/pagarme/pagarme-python)
+
+## License
+
+Pagar.me Python library is released under the [MIT License](http://www.opensource.org/licenses/MIT).
