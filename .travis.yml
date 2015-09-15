@@ -11,6 +11,6 @@ install:
   - pip install coveralls --use-mirrors
   #- pip install pytest  # installed by Travis by default already
 script:
-  - py.test --cov pygar_me
+  - py.test --cov pagarme
 after_success:
   - coveralls
