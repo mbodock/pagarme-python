@@ -33,7 +33,7 @@ class Transaction(AbstractResource):
         self.id = None
         self.data = {}
 
-        for key, value in kwargs.iteritems():
+        for key, value in kwargs.items():
             self.data[key] = value
 
     def error(self, response):

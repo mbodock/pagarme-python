@@ -59,6 +59,7 @@ class Pagarme(object):
 
     def validate_fingerprint(self, object_id, fingerprint):
         code = str(object_id) + '#' + self.api_key
+        code = code.encode('utf-8')
         sha1_hash = hashlib.sha1(code).hexdigest()
         return fingerprint == sha1_hash
 
