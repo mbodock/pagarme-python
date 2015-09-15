@@ -1,124 +1,117 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+# encoding: utf-8
 
+import json
 import requests
 
-from pagarme import PagarMe
+from .exceptions import PagarmeApiError, NotBoundException
+from .resource import AbstractResource
+from .transaction import Transaction
 
+class Plan(AbstractResource):
+    BASE_URL = 'https://api.pagar.me/1/plans'
 
-class Plan(PagarMe):
+    def __init__(self, api_key='', name='', amount=None, days=None, installments=1, payment_methods=['boleto', 'credit_card'],
+                 color=None, charges=1, trial_days=0, **kwargs):
 
-    def __init__(self, amount=None, days=None, name=None, trial_days=None,
-                 charges=None, installments=None):
-        self.amount = amount
-        self.days = days
-        self.name = name
-        self.trial_days = trial_days
-        self.charges = charges
-        self.installments = installments
-        self.data = {}
+        if not api_key:
+            raise ValueError('You should suply an api_key')
+        for payment_method in payment_methods:
+            if payment_method not in ['boleto', 'credit_card']:
+                raise ValueError('Invalid payment method, try a list with "boleto" and/or "credit_card"')
 
-    def create(self):
-        params = {
-            'api_key': self.api_key,
-            'amount': self.amount,
-            'days': self.days,
-            'name': self.name
-        }
+        self.data = {'api_key': api_key}
+        self.data['name'] = name
+        self.data['amount'] = amount
+        self.data['installments'] = installments
+        self.data['payment_methods'] = payment_methods
+        self.data['color'] = color
+        self.data['charges'] = charges
+        self.data['trial_days'] = trial_days
+        self.data['days'] = days
 
-        if self.trial_days:
-            params['trial_days'] = self.trial_days
-
-        if self.charges:
-            params['charges'] = self.charges
-
-        if self.installments:
-            params['installments'] = self.installments
-
-        data = requests.post(
-            self.api_endpoint + '/plans', data=params
-        )
-
-        self.data = data.json()
+        self.data.update(kwargs)
 
     def find_by_id(self, id):
-        params = {
-            'api_key': self.api_key
+        url = self.BASE_URL + '/' + str(id)
+        data = {'api_key': self.data['api_key']}
+        pagarme_response = requests.get(url, params=data)
+        if pagarme_response.status_code == 200:
+            self.handle_response(json.loads(pagarme_response.content))
+        else:
+            self.error(pagarme_response.content)
+
+
+class Subscription(AbstractResource):
+
+    BASE_URL = 'https://api.pagar.me/1/subscriptions'
+
+    def __init__(
+            self,
+            api_key=None,
+            plan_id=None,
+            card_id=None,
+            card_hash=None,
+            postback_url=None,
+            customer=None,
+            **kwargs):
+        if not api_key:
+            raise ValueError('Invalid api_key')
+        if plan_id and not isinstance(plan_id, int):
+            raise ValueError('plan_id should be a int')
+        if customer and not customer.data['email']:
+            raise ValueError('Customer email not found')
+
+        self.data = {
+            'api_key': api_key,
+            'plan_id': plan_id,
+            'card_hash': card_hash,
+            'postback_url': postback_url,
         }
-
-        data = requests.get(
-            self.api_endpoint + '/plans/{0}'.format(id), params=params
-        )
-
-        self.data = data.json()
-
-
-class Subscription(PagarMe):
-
-    def __init__(self, plan_id=None, card_hash=None, card_id=None,
-                 customer=None, metadata=None, payment_method=None,
-                 postback_url=None):
-        self.plan_id = plan_id
-        self.card_hash = card_hash
-        self.card_id = card_id
         self.customer = customer
-        self.metadata = metadata
-        self.payment_method = payment_method
-        self.postback_url = postback_url
-        self.data = {}
 
-    def create(self):
-        params = {
-            'api_key': self.api_key,
-            'plan_id': self.plan_id,
-        }
+        if card_hash:
+            self.data['card_hash'] = card_hash
+        else:
+            self.data['card_id'] = card_id
 
-        if self.card_hash:
-            params['card_hash'] = self.card_hash
+        self.data.update(kwargs)
 
-        if self.card_id:
-            params['card_id'] = self.card_id
-
+    def get_data(self):
+        data = self.data
         if self.customer:
-            params.update(self.customer.to_dict())
-
-        if self.metadata:
-            params.update(self.metadata.to_dict())
-
-        if self.payment_method:
-            params['payment_method'] = self.payment_method
-
-        if self.postback_url:
-            params['postback_url'] = self.postback_url
-
-        data = requests.post(
-            self.api_endpoint + '/subscriptions', data=params
-        )
-
-        self.data = data.json()
+            data.update(self.customer.to_dict())
+        return data
 
     def find_by_id(self, id):
-        params = {
-            'api_key': self.api_key
-        }
-
-        data = requests.get(
-            self.api_endpoint + '/subscriptions/{0}'.format(id), params=params
-        )
-
-        self.data = data.json()
+        url = self.BASE_URL + '/' + str(id)
+        data = {'api_key': self.data['api_key']}
+        pagarme_response = requests.get(url, params=data)
+        if pagarme_response.status_code == 200:
+            self.handle_response(json.loads(pagarme_response.content))
+        else:
+            self.error(pagarme_response.content)
 
     def cancel(self):
-        id = self.data.get('id', None)
+        if not self.data.get('id', False):
+            raise NotBoundException('First try search your subscription')
+        url = self.BASE_URL + '/{id}/cancel'.format(id=self.data['id'])
+        pagarme_response = requests.post(url, data={'api_key': self.data['api_key']})
+        if pagarme_response.status_code == 200:
+            self.handle_response(json.loads(pagarme_response.content))
+        else:
+            self.error(pagarme_response.content)
 
-        if id:
-            params = {
-                'api_key': self.api_key
-            }
-
-            data = requests.post(
-                self.api_endpoint + '/subscriptions/{0}/cancel'.format(id),
-                data=params
-            )
-
-            self.data = data.json()
+    def transactions(self):
+        if not self.data.get('id', False):
+            raise NotBoundException('First try search your subscription')
+        url = self.BASE_URL + '/{id}/transactions'.format(id=self.data['id'])
+        pagarme_response = requests.get(url, params={'api_key': self.data['api_key']})
+        if pagarme_response.status_code != 200:
+            self.error(pagarme_response.content)
+        response = json.loads(pagarme_response.content)
+        transactions = []
+        for transaction in response:
+            t = Transaction(self.data['api_key'])
+            t.handle_response(transaction)
+            transactions.append(t)
+        return transactions

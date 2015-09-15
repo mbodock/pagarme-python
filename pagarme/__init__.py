@@ -1,9 +1,4 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-__version__ = '1.1.0-dev'
+# encoding: utf-8
 
-
-class PagarMe(object):
-
-    api_key = ''
-    api_endpoint = 'https://api.pagar.me/1'
+from .pagarme import Pagarme
+from .exceptions import *
