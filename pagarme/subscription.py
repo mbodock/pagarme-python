@@ -70,9 +70,9 @@ class Subscription(AbstractResource):
         self.customer = customer
 
         if card_hash:
-            self.data['card_id'] = card_id
-        else:
             self.data['card_hash'] = card_hash
+        else:
+            self.data['card_id'] = card_id
 
         self.data.update(kwargs)
 

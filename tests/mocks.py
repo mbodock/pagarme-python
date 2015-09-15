@@ -265,3 +265,40 @@ def fake_error_sub(*args, **kwargs):
     """
     fake.status_code = 404
     return fake
+
+def fake_card_get(*args, **kwargs):
+    fake = FakeResponse()
+    fake.content = """
+    {
+        "object": "card",
+        "id": "card_ci6y37h16wrxsmzyi",
+        "date_created": "2015-03-06T21:21:25.000Z",
+        "date_updated": "2015-03-06T21:21:26.000Z",
+        "brand": "visa",
+        "holder_name": "API CUSTOMER",
+        "first_digits": "401872",
+        "last_digits": "8048",
+        "fingerprint": "Jl9oOIiDjAjR",
+        "customer": null,
+        "valid": true
+    }
+    """
+    return fake
+
+def fake_card_error(*args, **kwargs):
+    fake = FakeResponse()
+    fake.content = """
+    {
+        "errors": [
+            {
+                "parameter_name": "card_number",
+                "type": "invalid_parameter",
+                "message": "Número do cartão está faltando"
+            }
+        ],
+        "url": "/cards",
+        "method": "post"
+    }
+    """
+    fake.status_code = 404
+    return fake
