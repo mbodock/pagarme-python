@@ -7,6 +7,7 @@ from .resource import AbstractResource
 
 class Card(AbstractResource):
     BASE_URL = 'https://api.pagar.me/1/cards'
+
     def __init__(
             self,
             api_key=None,
@@ -16,6 +17,7 @@ class Card(AbstractResource):
             card_expiration_date=None,
             holder_name=None,
             card_hash=None):
+
         if card_hash is None:
             self.data = {
                 'card_number': card_number,
@@ -37,11 +39,12 @@ class Card(AbstractResource):
     def id(self):
         return self.data.get('id', '')
 
-    def find_by_id(self):
+    def find_by_id(self, id=None):
+        if id is None and not self.id:
+            raise ValueError('Cant find card id')
         url = self.BASE_URL + '/' + str(self.id)
         pagarme_response = requests.get(url, params={'api_key': self.data['api_key']})
         if pagarme_response.status_code == 200:
             self.handle_response(json.loads(pagarme_response.content))
         else:
             self.error(pagarme_response.content)
-

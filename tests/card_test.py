@@ -31,3 +31,8 @@ class CardTestCase(PagarmeTestCase):
         card = Card(api_key='api_key', id='cardid34j23l4')
         with self.assertRaises(PagarmeApiError):
             card.find_by_id()
+
+    def test_find_card_without_id(self):
+        card = Card(api_key='api_key')
+        with self.assertRaises(ValueError):
+            card.find_by_id()

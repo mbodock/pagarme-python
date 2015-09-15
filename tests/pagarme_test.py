@@ -15,7 +15,8 @@ from .mocks import (
     fake_create_plan,
     fake_get_plan,
     fake_error_plan,
-    fake_get_sub,)
+    fake_get_sub,
+    fake_card_get,)
 
 class PagarmeTestCase(unittest.TestCase):
     def setUp(self):
@@ -149,3 +150,9 @@ class PagarmeApiTestCase(PagarmeTestCase):
         pagarme = Pagarme(self.api_key)
         with self.assertRaises(PagarmeApiError):
             pagarme.all_subscriptions()
+
+    @mock.patch('requests.get', mock.Mock(side_effect=fake_card_get))
+    def test_find_card_by_id(self):
+        pagarme = Pagarme(self.api_key)
+        card = pagarme.find_card_by_id('card_ci6y37h16wrxsmzyi')
+        self.assertEqual('card_ci6y37h16wrxsmzyi', card.id)

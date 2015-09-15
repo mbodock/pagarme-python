@@ -4,6 +4,7 @@ import hashlib
 import json
 import requests
 
+from .card import Card
 from .exceptions import PagarmeApiError
 from .subscription import Plan, Subscription
 from .transaction import Transaction
@@ -140,3 +141,8 @@ class Pagarme(object):
             resource.handle_response(response)
             resources.append(resource)
         return resources
+
+    def find_card_by_id(self, id=None):
+        card = Card(self.api_key)
+        card.find_by_id(id)
+        return card
