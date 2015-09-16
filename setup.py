@@ -12,8 +12,8 @@ testing_extras = [
 setup(
     name='pagarme-python',
     version=pagarme.__version__,
-    author='Allisson Azevedo',
-    author_email='allisson@gmail.com',
+    author=pagarme.__author__,
+    author_email=pagarme.__author_email__,
     packages=find_packages(),
     license='MIT',
     description=pagarme.__description__,
