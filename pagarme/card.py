@@ -42,9 +42,10 @@ class Card(AbstractResource):
         return self.data.get('id', '')
 
     def find_by_id(self, id=None):
-        if id is None and not self.id:
+        if id is None and not self.data.get('id', False):
             raise ValueError('Cant find card id')
-        url = self.BASE_URL + '/' + str(self.id)
+        card_id = id if id else self.data['id']
+        url = self.BASE_URL + '/' + str(card_id)
         pagarme_response = requests.get(url, params={'api_key': self.data['api_key']})
         if pagarme_response.status_code == 200:
             self.handle_response(json.loads(pagarme_response.content))

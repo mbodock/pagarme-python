@@ -39,6 +39,7 @@ class Pagarme(object):
             api_key=self.api_key,
             amount=amount,
             card_hash=card_hash,
+            card_id=card_id,
             payment_method=payment_method,
             installments=installments,
             postback_url=postback_url,

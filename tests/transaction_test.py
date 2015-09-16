@@ -62,7 +62,7 @@ class TransactionTestCase(PagarmeTestCase):
             card_hash='cardhash',
             metadata={'sku': 'foo bar'},
         )
-        self.assertEqual('foo bar', transaction.get_data()['metadata']['sku'])
+        self.assertEqual('foo bar', transaction.get_data()['metadata[sku]'])
 
     def test_transaction_can_have_any_arguments(self):
         transaction = Transaction(

@@ -73,8 +73,7 @@ class Transaction(AbstractResource):
             self.error(pagarme_response.content)
 
     def get_data(self):
-        self.data = self.__dict__()
-        return self.data
+        return self.__dict__()
 
     def __dict__(self):
         d = self.data
@@ -88,7 +87,9 @@ class Transaction(AbstractResource):
             d['soft_descriptor'] = self.soft_descriptor[:13]
 
         if self.metadata:
-            d['metadata'] = self.metadata
+            for key, value in self.metadata.items():
+                new_key = 'metadata[{key}]'.format(key=key)
+                d[new_key] = value
 
         if self.postback_url:
             d['postback_url'] = self.postback_url
