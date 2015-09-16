@@ -1,5 +1,6 @@
 # encoding: utf-8
 
+from six import with_metaclass
 import hashlib
 import json
 import requests
@@ -162,8 +163,6 @@ class PagarmeInterceptor(type):
         return cls.pagarme.__getattribute__(key)
 
 
-class PagarmeFacade:
+class PagarmeFacade(with_metaclass(PagarmeInterceptor)):
     api_key = None
     pagarme = None
-
-    __metaclass__ = PagarmeInterceptor
