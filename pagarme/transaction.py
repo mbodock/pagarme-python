@@ -15,6 +15,7 @@ class Transaction(AbstractResource):
             api_key=None,
             amount=None,
             card_hash=None,
+            card_id=None,
             payment_method='credit_card',
             installments=1,
             postback_url=None,
@@ -25,6 +26,7 @@ class Transaction(AbstractResource):
         self.amount = amount
         self.api_key = api_key
         self.card_hash = card_hash
+        self.card_id = card_id
         self.payment_method = payment_method
         self.installments = installments
         self.postback_url = postback_url
@@ -57,7 +59,7 @@ class Transaction(AbstractResource):
         self.card = data['card']
         self.postback_url = data['postback_url']
         self.metadata = data['metadata']
-        self.response_data = data
+        self.data = data
 
     def capture(self):
         if self.id is None:
@@ -80,6 +82,7 @@ class Transaction(AbstractResource):
         if self.amount:
             d['amount'] = self.amount
             d['card_hash'] = self.card_hash
+            d['card_id'] = self.card_id
             d['installments'] = self.installments
             d['payment_method'] = self.payment_method
             d['soft_descriptor'] = self.soft_descriptor[:13]
