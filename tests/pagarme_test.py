@@ -3,10 +3,12 @@
 import mock
 import unittest
 
-from pagarme import Pagarme, PagarmeApiError
 from pagarme.customer import Customer
-from pagarme.transaction import Transaction
+from pagarme.exceptions import PagarmeApiError
+from pagarme.pagarme import Pagarme as CorrectlyPagarme
+from pagarme.pagarme_facade import PagarmeFacade as Pagarme
 from pagarme.resource import AbstractResource
+from pagarme.transaction import Transaction
 
 from .mocks import (
     fake_request,
@@ -17,6 +19,7 @@ from .mocks import (
     fake_error_plan,
     fake_get_sub,
     fake_card_get,)
+
 
 class PagarmeTestCase(unittest.TestCase):
     def setUp(self):
@@ -31,7 +34,7 @@ class PagarmeApiTestCase(PagarmeTestCase):
 
     def test_can_instantiate(self):
         pagarme = Pagarme(self.api_key)
-        self.assertIsInstance(pagarme, Pagarme)
+        self.assertIsInstance(pagarme, CorrectlyPagarme)
 
     def test_invalid_api(self):
         with self.assertRaises(ValueError):
@@ -156,3 +159,17 @@ class PagarmeApiTestCase(PagarmeTestCase):
         pagarme = Pagarme(self.api_key)
         card = pagarme.find_card_by_id('card_ci6y37h16wrxsmzyi')
         self.assertEqual('card_ci6y37h16wrxsmzyi', card.id)
+
+
+class PagarmeFacadeTestCase(PagarmeTestCase):
+    def tearDown(self):
+        Pagarme.api_key = None
+
+    def test_call_without_api_key(self):
+        with self.assertRaises(ValueError):
+            Pagarme.find_transaction_by_id(1321)
+
+    def test_call_start_transaction(self):
+        Pagarme.api_key = 'api_key'
+        transaction = Pagarme.start_transaction(amount=10, card_hash='ahsh', piranha='doida', mane='garrinha')
+        self.assertIsInstance(transaction, Transaction)

@@ -2,11 +2,13 @@
 
 import json
 import requests
+
 from .resource import AbstractResource
+from .settings import BASE_URL
 
 
 class Card(AbstractResource):
-    BASE_URL = 'https://api.pagar.me/1/cards'
+    BASE_URL = BASE_URL + 'cards'
 
     def __init__(
             self,

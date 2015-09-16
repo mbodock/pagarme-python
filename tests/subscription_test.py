@@ -3,7 +3,8 @@
 import mock
 
 from pagarme.customer import Customer
-from pagarme.subscription import Plan, PagarmeApiError, Subscription, NotBoundException
+from pagarme.exceptions import PagarmeApiError
+from pagarme.subscription import Plan, Subscription, NotBoundException
 from pagarme.transaction import Transaction
 
 from .mocks import fake_request_list, fake_create_plan, fake_get_plan, fake_error_plan, fake_get_sub, fake_error_sub
