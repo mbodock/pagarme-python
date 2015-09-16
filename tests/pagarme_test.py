@@ -5,7 +5,8 @@ import unittest
 
 from pagarme.customer import Customer
 from pagarme.exceptions import PagarmeApiError
-from pagarme.pagarme import Pagarme, PagarmeFacade
+from pagarme.pagarme import Pagarme as CorrectlyPagarme
+from pagarme.pagarme_facade import PagarmeFacade as Pagarme
 from pagarme.resource import AbstractResource
 from pagarme.transaction import Transaction
 
@@ -33,7 +34,7 @@ class PagarmeApiTestCase(PagarmeTestCase):
 
     def test_can_instantiate(self):
         pagarme = Pagarme(self.api_key)
-        self.assertIsInstance(pagarme, Pagarme)
+        self.assertIsInstance(pagarme, CorrectlyPagarme)
 
     def test_invalid_api(self):
         with self.assertRaises(ValueError):
@@ -162,13 +163,13 @@ class PagarmeApiTestCase(PagarmeTestCase):
 
 class PagarmeFacadeTestCase(PagarmeTestCase):
     def tearDown(self):
-        PagarmeFacade.api_key = None
+        Pagarme.api_key = None
 
     def test_call_without_api_key(self):
         with self.assertRaises(ValueError):
-            PagarmeFacade.find_transaction_by_id(1321)
+            Pagarme.find_transaction_by_id(1321)
 
     def test_call_start_transaction(self):
-        PagarmeFacade.api_key = 'api_key'
-        transaction = PagarmeFacade.start_transaction(amount=10, card_hash='ahsh', piranha='doida', mane='garrinha')
+        Pagarme.api_key = 'api_key'
+        transaction = Pagarme.start_transaction(amount=10, card_hash='ahsh', piranha='doida', mane='garrinha')
         self.assertIsInstance(transaction, Transaction)

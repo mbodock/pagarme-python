@@ -1,6 +1,5 @@
 # encoding: utf-8
 
-from six import with_metaclass
 import hashlib
 import json
 import requests
@@ -148,21 +147,3 @@ class Pagarme(object):
         card = Card(self.api_key)
         card.find_by_id(id)
         return card
-
-
-class PagarmeInterceptor(type):
-    """
-    Intercepts all calls from PagarmeFacade
-    """
-    def __getattr__(cls, key):
-        if cls.api_key is None:
-            raise ValueError('Undefined api_key')
-        if cls.pagarme is None:
-            cls.pagarme = Pagarme(cls.api_key)
-        cls.pagarme.api_key = cls.api_key
-        return cls.pagarme.__getattribute__(key)
-
-
-class PagarmeFacade(with_metaclass(PagarmeInterceptor)):
-    api_key = None
-    pagarme = None
