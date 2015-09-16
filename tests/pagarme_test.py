@@ -3,10 +3,11 @@
 import mock
 import unittest
 
-from pagarme import Pagarme, PagarmeApiError
 from pagarme.customer import Customer
-from pagarme.transaction import Transaction
+from pagarme.exceptions import PagarmeApiError
+from pagarme.pagarme import Pagarme
 from pagarme.resource import AbstractResource
+from pagarme.transaction import Transaction
 
 from .mocks import (
     fake_request,
@@ -17,6 +18,7 @@ from .mocks import (
     fake_error_plan,
     fake_get_sub,
     fake_card_get,)
+
 
 class PagarmeTestCase(unittest.TestCase):
     def setUp(self):

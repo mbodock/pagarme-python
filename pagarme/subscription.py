@@ -5,10 +5,12 @@ import requests
 
 from .exceptions import NotBoundException
 from .resource import AbstractResource
+from .settings import BASE_URL
 from .transaction import Transaction
 
+
 class Plan(AbstractResource):
-    BASE_URL = 'https://api.pagar.me/1/plans'
+    BASE_URL = BASE_URL + 'plans'
 
     def __init__(self, api_key='', name='', amount=None, days=None, installments=1, payment_methods=['boleto', 'credit_card'],
                  color=None, charges=1, trial_days=0, **kwargs):
@@ -42,8 +44,7 @@ class Plan(AbstractResource):
 
 
 class Subscription(AbstractResource):
-
-    BASE_URL = 'https://api.pagar.me/1/subscriptions'
+    BASE_URL = BASE_URL + 'subscriptions'
 
     def __init__(
             self,
