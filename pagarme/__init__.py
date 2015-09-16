@@ -9,7 +9,7 @@ __author_email__ = 'allisson@gmail.com, mbodock@gmail.com, ip.leroy@gmail.com'
 
 from .card import Card
 from .customer import Customer
-from .pagarme import Pagarme
+from .pagarme import PagarmeFacade as Pagarme
 from .subscription import Plan, Subscription
 from .transaction import Transaction
 

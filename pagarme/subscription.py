@@ -3,7 +3,7 @@
 import json
 import requests
 
-from .exceptions import PagarmeApiError, NotBoundException
+from .exceptions import NotBoundException
 from .resource import AbstractResource
 from .transaction import Transaction
 
