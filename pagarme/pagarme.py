@@ -20,6 +20,7 @@ class Pagarme(object):
             self,
             amount=None,
             card_hash=None,
+            card_id=None,
             payment_method='credit_card',
             installments=1,
             postback_url=None,
@@ -27,8 +28,8 @@ class Pagarme(object):
 
         if not amount:
             raise ValueError('You should suply the value')
-        if not card_hash and payment_method == 'credit_card':
-            raise ValueError('You should suply a card_hash')
+        if payment_method == 'credit_card' and not (card_id or card_hash):
+            raise ValueError('You should suply a card_hash or card_id')
         if payment_method not in ('credit_card', 'boleto'):
             raise ValueError('Invalid payment_method')
         if not installments:
