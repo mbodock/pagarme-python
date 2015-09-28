@@ -21,6 +21,7 @@ class Transaction(AbstractResource):
             postback_url=None,
             metadata={},
             soft_descriptor='',
+            customer=None,
             **kwargs):
 
         self.amount = amount
@@ -34,6 +35,7 @@ class Transaction(AbstractResource):
         self.soft_descriptor = soft_descriptor[:13]
         self.id = None
         self.data = {}
+        self.customer = customer
 
         for key, value in kwargs.items():
             self.data[key] = value
@@ -93,6 +95,10 @@ class Transaction(AbstractResource):
 
         if self.postback_url:
             d['postback_url'] = self.postback_url
+
+        if self.customer:
+            d.update(self.customer.get_ant_fraud_data())
+
         return d
 
     def find_by_id(self, id=None):

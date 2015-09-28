@@ -21,11 +21,16 @@ class Customer(object):
             'phone_number': phone_number,
         }
 
-    def to_dict(self):
+    def get_ant_fraud_data(self):
         d = {}
         for key, value in self.data.items():
-            if value is not None:
+            if value is None:
+                continue
+            elif 'address' in key:
+                new_key = 'customer[address][{key}]'.format(key=key.replace('address_', ''))
+            elif 'phone' in key:
+                new_key = 'customer[phone][{key}]'.format(key=key.replace('phone_', ''))
+            else:
                 new_key = 'customer[{key}]'.format(key=key)
-                d[new_key] = value
-
+            d[new_key] = value
         return d

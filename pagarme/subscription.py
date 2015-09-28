@@ -80,7 +80,7 @@ class Subscription(AbstractResource):
     def get_data(self):
         data = self.data
         if self.customer:
-            data.update(self.customer.to_dict())
+            data.update(self.customer.get_ant_fraud_data())
         return data
 
     def find_by_id(self, id):

@@ -2,6 +2,7 @@
 
 import mock
 
+from pagarme import Customer
 from pagarme.transaction import Transaction, PagarmeApiError, NotPaidException, NotBoundException
 
 from .mocks import fake_request, fake_request_fail, fake_request_refund
@@ -102,3 +103,25 @@ class TransactionTestCase(PagarmeTestCase):
         transaction.find_by_id(314)
         with self.assertRaises(PagarmeApiError):
             transaction.capture()
+
+    @mock.patch('requests.post', mock.Mock(side_effect=fake_request))
+    def test_transaction_with_ant_fraud(self):
+        customer = Customer(
+            name='foo bar',
+            document_number='11122233345',
+            email='teste@email.com.br',
+            address_street='bar foo',
+            address_neighborhood='baz for',
+            address_zipcode='3945154',
+            address_street_number='99',
+            phone_ddd='31',
+            phone_number='9144587'
+        )
+
+        transaction = Transaction(
+            api_key='apikey',
+            amount=314,
+            card_hash='cardhash',
+            customer = customer
+        )
+        self.assertIn('customer[phone][ddd]', transaction.get_data())
