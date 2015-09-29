@@ -97,7 +97,7 @@ class Transaction(AbstractResource):
             d['postback_url'] = self.postback_url
 
         if self.customer:
-            d.update(self.customer.get_ant_fraud_data())
+            d.update(self.customer.get_anti_fraud_data())
 
         return d
 

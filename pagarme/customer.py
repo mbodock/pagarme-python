@@ -21,7 +21,7 @@ class Customer(object):
             'phone_number': phone_number,
         }
 
-    def get_ant_fraud_data(self):
+    def get_anti_fraud_data(self):
         d = {}
         for key, value in self.data.items():
             if value is None:
