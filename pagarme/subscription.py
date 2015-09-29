@@ -16,7 +16,7 @@ class Plan(AbstractResource):
                  color=None, charges=1, trial_days=0, **kwargs):
 
         if not api_key:
-            raise ValueError('You should suply an api_key')
+            raise ValueError('You should supply an api_key')
         for payment_method in payment_methods:
             if payment_method not in ['boleto', 'credit_card']:
                 raise ValueError('Invalid payment method, try a list with "boleto" and/or "credit_card"')
