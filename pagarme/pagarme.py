@@ -2,8 +2,8 @@
 
 import hashlib
 import json
-import requests
 
+from .api_client import ApiClient
 from .card import Card
 from .exceptions import PagarmeApiError
 from .subscription import Plan, Subscription
@@ -15,6 +15,7 @@ class Pagarme(object):
         if not api_key:
             raise ValueError('You should suply the api key.')
         self.api_key = api_key
+        self.api = ApiClient(api_key)
 
     def start_transaction(
             self,
@@ -129,12 +130,11 @@ class Pagarme(object):
 
     def get_all_resources(self, Class, page, count):
         data = {
-            'api_key': self.api_key,
             'page': page,
             'count': count,
         }
         url = Class.BASE_URL
-        pagarme_response = requests.get(url, params=data)
+        pagarme_response = self.api.get(url, params=data)
         if pagarme_response.status_code != 200:
             self.error(pagarme_response.content)
         responses = json.loads(pagarme_response.content)

@@ -1,10 +1,10 @@
 # encoding: utf-8
 
 import json
-import requests
 
 from .resource import AbstractResource
 from .settings import BASE_URL
+from .api_client import ApiClient
 
 
 class Card(AbstractResource):
@@ -32,7 +32,7 @@ class Card(AbstractResource):
 
         if id is not None:
             self.data['id'] = id
-        self.data['api_key'] = api_key
+        self.api = ApiClient(api_key)
 
     def get_data(self):
         return self.data
@@ -46,7 +46,7 @@ class Card(AbstractResource):
             raise ValueError('Cant find card id')
         card_id = id if id else self.data['id']
         url = self.BASE_URL + '/' + str(card_id)
-        pagarme_response = requests.get(url, params={'api_key': self.data['api_key']})
+        pagarme_response = self.api.get(url)
         if pagarme_response.status_code == 200:
             self.handle_response(json.loads(pagarme_response.content))
         else:

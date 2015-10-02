@@ -1,7 +1,6 @@
 # encoding: utf-8
 
 import json
-import requests
 
 from .exceptions import PagarmeApiError
 
@@ -20,11 +19,13 @@ class AbstractResource(object):
 
     def create(self):
         url = self.BASE_URL
-        pagarme_response = requests.post(url, data=self.get_data())
+        pagarme_response = self.api.post(url, data=self.get_data())
         if pagarme_response.status_code == 200:
             self.handle_response(json.loads(pagarme_response.content))
         else:
             self.error(pagarme_response.content)
 
     def get_data(self):
-        return self.data
+        data = self.data.copy()
+        data.pop('api_key', False)
+        return data

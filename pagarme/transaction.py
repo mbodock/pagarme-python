@@ -1,8 +1,8 @@
 # encoding: utf-8
 
 import json
-import requests
 
+from .api_client import ApiClient
 from .exceptions import PagarmeApiError, NotPaidException, NotBoundException
 from .resource import AbstractResource
 
@@ -40,6 +40,8 @@ class Transaction(AbstractResource):
         for key, value in kwargs.items():
             self.data[key] = value
 
+        self.api = ApiClient(api_key)
+
     def error(self, response):
         data = json.loads(response)
         e = data['errors'][0]
@@ -49,7 +51,7 @@ class Transaction(AbstractResource):
     def charge(self):
         post_data = self.get_data()
         url = self.BASE_URL
-        pagarme_response = requests.post(url, data=post_data)
+        pagarme_response = self.api.post(url, data=post_data)
         if pagarme_response.status_code == 200:
             self.handle_response(json.loads(pagarme_response.content))
         else:
@@ -68,7 +70,7 @@ class Transaction(AbstractResource):
             raise NotBoundException('First try search your transaction')
         url = self.BASE_URL + '/' + str(self.id) + '/caputre'
         data = {'api_key': self.api_key}
-        pagarme_response = requests.post(url, data=data)
+        pagarme_response = self.api.post(url, data=data)
         if pagarme_response.status_code == 200:
             self.handle_response(json.loads(pagarme_response.content))
         else:
@@ -103,7 +105,7 @@ class Transaction(AbstractResource):
 
     def find_by_id(self, id=None):
         url = self.BASE_URL + '/' + str(id)
-        pagarme_response = requests.get(url, data=self.get_data())
+        pagarme_response = self.api.get(url, data=self.get_data())
         if pagarme_response.status_code == 200:
             self.handle_response(json.loads(pagarme_response.content))
         else:
@@ -114,7 +116,7 @@ class Transaction(AbstractResource):
             raise NotPaidException('Id not suplied')
 
         url = self.BASE_URL + '/' + str(self.id) + '/refund'
-        pagarme_response = requests.post(url, data=self.get_data())
+        pagarme_response = self.api.post(url, data=self.get_data())
         if pagarme_response.status_code == 200:
             self.handle_response(json.loads(pagarme_response.content))
         else:

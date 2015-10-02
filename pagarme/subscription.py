@@ -1,8 +1,8 @@
 # encoding: utf-8
 
 import json
-import requests
 
+from .api_client import ApiClient
 from .exceptions import NotBoundException
 from .resource import AbstractResource
 from .settings import BASE_URL
@@ -32,11 +32,11 @@ class Plan(AbstractResource):
         self.data['days'] = days
 
         self.data.update(kwargs)
+        self.api = ApiClient(api_key)
 
     def find_by_id(self, id):
         url = self.BASE_URL + '/' + str(id)
-        data = {'api_key': self.data['api_key']}
-        pagarme_response = requests.get(url, params=data)
+        pagarme_response = self.api.get(url)
         if pagarme_response.status_code == 200:
             self.handle_response(json.loads(pagarme_response.content))
         else:
@@ -75,6 +75,7 @@ class Subscription(AbstractResource):
         else:
             self.data['card_id'] = card_id
 
+        self.api = ApiClient(api_key)
         self.data.update(kwargs)
 
     def get_data(self):
@@ -85,8 +86,7 @@ class Subscription(AbstractResource):
 
     def find_by_id(self, id):
         url = self.BASE_URL + '/' + str(id)
-        data = {'api_key': self.data['api_key']}
-        pagarme_response = requests.get(url, params=data)
+        pagarme_response = self.api.get(url)
         if pagarme_response.status_code == 200:
             self.handle_response(json.loads(pagarme_response.content))
         else:
@@ -96,7 +96,7 @@ class Subscription(AbstractResource):
         if not self.data.get('id', False):
             raise NotBoundException('First try search your subscription')
         url = self.BASE_URL + '/{id}/cancel'.format(id=self.data['id'])
-        pagarme_response = requests.post(url, data={'api_key': self.data['api_key']})
+        pagarme_response = self.api.post(url)
         if pagarme_response.status_code == 200:
             self.handle_response(json.loads(pagarme_response.content))
         else:
@@ -106,7 +106,7 @@ class Subscription(AbstractResource):
         if not self.data.get('id', False):
             raise NotBoundException('First try search your subscription')
         url = self.BASE_URL + '/{id}/transactions'.format(id=self.data['id'])
-        pagarme_response = requests.get(url, params={'api_key': self.data['api_key']})
+        pagarme_response = self.api.get(url)
         if pagarme_response.status_code != 200:
             self.error(pagarme_response.content)
         response = json.loads(pagarme_response.content)
