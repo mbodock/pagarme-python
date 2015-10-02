@@ -1,6 +1,12 @@
 # -*- coding: utf-8 -*-
 from setuptools import setup, find_packages
-import pagarme
+
+__version__ = '2.0.0'
+__description__ = 'Pagar.me Python'
+__long_description__ = 'Python library for the pagar.me gateway'
+
+__author__ = 'Allisson Azevedo, Marcus Bodock, Igor P. Leroy'
+__author_email__ = 'allisson@gmail.com, mbodock@gmail.com, ip.leroy@gmail.com'
 
 requires = [i.strip() for i in open("requirements.txt").readlines()]
 
@@ -11,13 +17,13 @@ testing_extras = [
 
 setup(
     name='pagarme-python',
-    version=pagarme.__version__,
-    author=pagarme.__author__,
-    author_email=pagarme.__author_email__,
+    version=__version__,
+    author=__author__,
+    author_email=__author_email__,
     packages=find_packages(),
     license='MIT',
-    description=pagarme.__description__,
-    long_description=pagarme.__long_description__,
+    description=__description__,
+    long_description=__long_description__,
     url='https://github.com/pagarme/pagarme-python',
     keywords='Payment, pagarme',
     include_package_data=True,
