@@ -8,6 +8,9 @@ class Customer(object):
                  address_street=None, address_neighborhood=None,
                  address_zipcode=None, address_street_number=None,
                  address_complementary=None, phone_ddd=None, phone_number=None):
+
+        address_zipcode = address_zipcode.replace('.', '').replace('-', '') if address_zipcode else None
+        document_number = document_number.replace('.', '').replace('-', '') if document_number else None
         self.data = {
             'name': name,
             'document_number': document_number,
