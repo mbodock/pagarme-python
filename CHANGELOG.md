@@ -1,6 +1,6 @@
 # CHANGELOG
 
-### 2.1.0 (develop version)
+### 2.1.0
 * Added python 3.5 support.
 * Implemented transactions by card_id.
 * Implemented static calls for Pagarme, now you can call 'static' methods just like the ruby api.
