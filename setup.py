@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 from setuptools import setup, find_packages
 
-__version__ = '2.1.2'
+__version__ = '2.1.1'
 __description__ = 'Pagar.me Python'
 __long_description__ = 'Python library for the pagar.me gateway'
 
-__author__ = 'Allisson Azevedo, Marcus Bodock, Igor P. Leroy, Victor Gama'
-__author_email__ = 'allisson@gmail.com, mbodock@gmail.com, ip.leroy@gmail.com, hey@vito.io'
+__author__ = 'Allisson Azevedo, Marcus Bodock, Igor P. Leroy'
+__author_email__ = 'allisson@gmail.com, mbodock@gmail.com, ip.leroy@gmail.com'
 
 requires = [i.strip() for i in open("requirements.txt").readlines()]
 
