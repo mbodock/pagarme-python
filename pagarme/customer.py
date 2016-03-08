@@ -1,17 +1,23 @@
 # encoding: utf-8
 
 from __future__ import unicode_literals
+from .resource import AbstractResource
+from .settings import BASE_URL
 
-class Customer(object):
 
-    def __init__(self, name=None, document_number=None, email=None,
+class Customer(AbstractResource):
+    BASE_URL = BASE_URL + 'customers'
+
+    def __init__(self, api_key=None, name=None, document_number=None, email=None,
                  address_street=None, address_neighborhood=None,
                  address_zipcode=None, address_street_number=None,
-                 address_complementary=None, phone_ddd=None, phone_number=None):
+                 address_complementary=None, phone_ddd=None, phone_number=None, **kwargs):
 
+        self.api_key = api_key
         address_zipcode = address_zipcode.replace('.', '').replace('-', '') if address_zipcode else None
         document_number = document_number.replace('.', '').replace('-', '') if document_number else None
         self.data = {
+            'api_key': api_key,
             'name': name,
             'document_number': document_number,
             'email': email,
@@ -23,6 +29,7 @@ class Customer(object):
             'phone_ddd': phone_ddd,
             'phone_number': phone_number,
         }
+        self.data.update(kwargs)
 
     def get_anti_fraud_data(self):
         d = {}
