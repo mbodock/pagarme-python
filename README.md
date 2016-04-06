@@ -16,6 +16,9 @@ $ pip install pagarme-python
 
 * [API Guide](http://pagar.me/docs)
 
+## Support
+If you have any problem or suggestion please open an issue [here](https://github.com/pagarme/pagarme-python/issues).
+
 ## License
 
-Pagar.me Python library is released under the [MIT License](http://www.opensource.org/licenses/MIT).
+Check [here](LICENSE).
