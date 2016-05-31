@@ -1,9 +1,8 @@
 # encoding: utf-8
 
-import json
 import requests
 
-from .exceptions import PagarmeApiError, NotPaidException, NotBoundException
+from .exceptions import NotPaidException, NotBoundException
 from .resource import AbstractResource
 
 
@@ -40,18 +39,13 @@ class Transaction(AbstractResource):
         for key, value in kwargs.items():
             self.data[key] = value
 
-    def error(self, response):
-        data = json.loads(response)
-        e = data['errors'][0]
-        error_string = e['type'] + ' - ' + e['message']
-        raise PagarmeApiError(error_string)
-
     def charge(self):
         post_data = self.get_data()
         url = self.BASE_URL
         pagarme_response = requests.post(url, data=post_data)
         if pagarme_response.status_code == 200:
-            self.handle_response(json.loads(pagarme_response.content))
+            self.handle_response(
+                self.response_to_json(pagarme_response.content))
         else:
             self.error(pagarme_response.content)
 
@@ -70,7 +64,8 @@ class Transaction(AbstractResource):
         data = {'api_key': self.api_key}
         pagarme_response = requests.post(url, data=data)
         if pagarme_response.status_code == 200:
-            self.handle_response(json.loads(pagarme_response.content))
+            self.handle_response(
+                self.response_to_json(pagarme_response.content))
         else:
             self.error(pagarme_response.content)
 
@@ -101,11 +96,12 @@ class Transaction(AbstractResource):
 
         return d
 
-    def find_by_id(self, id=None):
-        url = self.BASE_URL + '/' + str(id)
+    def find_by_id(self, transaction_id=None):
+        url = self.BASE_URL + '/' + str(transaction_id)
         pagarme_response = requests.get(url, data=self.get_data())
         if pagarme_response.status_code == 200:
-            self.handle_response(json.loads(pagarme_response.content))
+            self.handle_response(
+                self.response_to_json(pagarme_response.content))
         else:
             self.error(pagarme_response.content)
 
@@ -116,6 +112,7 @@ class Transaction(AbstractResource):
         url = self.BASE_URL + '/' + str(self.id) + '/refund'
         pagarme_response = requests.post(url, data=self.get_data())
         if pagarme_response.status_code == 200:
-            self.handle_response(json.loads(pagarme_response.content))
+            self.handle_response(
+                self.response_to_json(pagarme_response.content))
         else:
             self.error(pagarme_response.content)

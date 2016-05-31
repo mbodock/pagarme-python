@@ -5,15 +5,25 @@ import requests
 
 from .exceptions import PagarmeApiError
 
+
 class AbstractResource(object):
+    BASE_URL = None
+
     def __init__(self):
+        self.data = {}
         raise NotImplementedError
 
     def handle_response(self, data):
         self.data.update(data)
 
+    def response_to_json(self, response):
+        try:
+            return json.loads(response)
+        except TypeError:
+            return json.loads(response.decode('utf-8'))
+
     def error(self, response):
-        data = json.loads(response)
+        data = self.response_to_json(response)
         e = data['errors'][0]
         error_string = e['type'] + ' - ' + e['message']
         raise PagarmeApiError(error_string)

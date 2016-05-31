@@ -12,14 +12,16 @@ from .transaction import Transaction
 class Plan(AbstractResource):
     BASE_URL = BASE_URL + 'plans'
 
-    def __init__(self, api_key='', name='', amount=None, days=None, installments=1, payment_methods=['boleto', 'credit_card'],
+    def __init__(self, api_key='', name='', amount=None, days=None,
+                 installments=1, payment_methods=['boleto', 'credit_card'],
                  color=None, charges=1, trial_days=0, **kwargs):
 
         if not api_key:
             raise ValueError('You should supply an api_key')
         for payment_method in payment_methods:
             if payment_method not in ['boleto', 'credit_card']:
-                raise ValueError('Invalid payment method, try a list with "boleto" and/or "credit_card"')
+                raise ValueError('Invalid payment method, try a list with '
+                                 '"boleto" and/or "credit_card"')
 
         self.data = {'api_key': api_key}
         self.data['name'] = name
@@ -33,12 +35,13 @@ class Plan(AbstractResource):
 
         self.data.update(kwargs)
 
-    def find_by_id(self, id):
-        url = self.BASE_URL + '/' + str(id)
+    def find_by_id(self, plan_id):
+        url = self.BASE_URL + '/' + str(plan_id)
         data = {'api_key': self.data['api_key']}
         pagarme_response = requests.get(url, params=data)
         if pagarme_response.status_code == 200:
-            self.handle_response(json.loads(pagarme_response.content))
+            self.handle_response(
+                self.response_to_json(pagarme_response.content))
         else:
             self.error(pagarme_response.content)
 
@@ -83,12 +86,13 @@ class Subscription(AbstractResource):
             data.update(self.customer.get_anti_fraud_data())
         return data
 
-    def find_by_id(self, id):
-        url = self.BASE_URL + '/' + str(id)
+    def find_by_id(self, sub_id):
+        url = self.BASE_URL + '/' + str(sub_id)
         data = {'api_key': self.data['api_key']}
         pagarme_response = requests.get(url, params=data)
         if pagarme_response.status_code == 200:
-            self.handle_response(json.loads(pagarme_response.content))
+            self.handle_response(
+                self.response_to_json(pagarme_response.content))
         else:
             self.error(pagarme_response.content)
 
@@ -96,9 +100,11 @@ class Subscription(AbstractResource):
         if not self.data.get('id', False):
             raise NotBoundException('First try search your subscription')
         url = self.BASE_URL + '/{id}/cancel'.format(id=self.data['id'])
-        pagarme_response = requests.post(url, data={'api_key': self.data['api_key']})
+        pagarme_response = requests.post(url, data={'api_key':
+                                         self.data['api_key']})
         if pagarme_response.status_code == 200:
-            self.handle_response(json.loads(pagarme_response.content))
+            self.handle_response(
+                self.response_to_json(pagarme_response.content))
         else:
             self.error(pagarme_response.content)
 
@@ -106,10 +112,11 @@ class Subscription(AbstractResource):
         if not self.data.get('id', False):
             raise NotBoundException('First try search your subscription')
         url = self.BASE_URL + '/{id}/transactions'.format(id=self.data['id'])
-        pagarme_response = requests.get(url, params={'api_key': self.data['api_key']})
+        pagarme_response = requests.get(url, params={'api_key':
+                                        self.data['api_key']})
         if pagarme_response.status_code != 200:
             self.error(pagarme_response.content)
-        response = json.loads(pagarme_response.content)
+        response = self.response_to_json(pagarme_response.content)
         transactions = []
         for transaction in response:
             t = Transaction(self.data['api_key'])
